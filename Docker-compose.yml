@@ -20,15 +20,12 @@ services:
       - ./bid_managment:/var/www/html
     networks:
       - bid_managment
-  db:
+  mysql:
     image: mysql:8.0
-    container_name: bid_managment-db
+    container_name: db
     restart: unless-stopped
-    environment:
-      - MYSQL_DATABASE=laravel
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=user
-      - MYSQL_ROOT_PASSWORD=root
+    env_file:
+      - ./docker/mysql/.env
     ports:
       - '3306:3306'
     expose:
@@ -39,6 +36,7 @@ services:
       - bid_managment
   nginx:
     image: nginx:latest
+    container_name: nginx
     ports:
       - 8888:8888
     volumes:
@@ -46,15 +44,16 @@ services:
       - './docker/nginx/conf.d:/etc/nginx/conf.d'
     networks:
       - bid_managment
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    ports:
-      - 1500:80
-    environment:
-      - VIRTUAL_HOST=phpmyadmin.local
-      - PMA_HOST=mysql
-    networks:
-      - bid_managment
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin:latest
+  #   container_name: phpmyadmin
+  #   ports:
+  #     - 1500:80
+  #   environment:
+  #     - VIRTUAL_HOST=phpmyadmin.local
+  #     - PMA_HOST=mysql
+  #   networks:
+  #     - bid_managment
 volumes:
   dbdata:
     driver: local
