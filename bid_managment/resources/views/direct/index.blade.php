@@ -1,4 +1,4 @@
-@extends('direct.layout')
+@extends('layout')
 
 @section('title', 'main')
 
