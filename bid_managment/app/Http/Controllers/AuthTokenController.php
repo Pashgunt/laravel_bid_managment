@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BID\Contracts\Directs;
 use App\BID\Repositories\DirectRepository;
 use App\Http\Requests\ValidateCodeDirect;
 use Illuminate\Http\Request;
@@ -36,23 +37,12 @@ class AuthTokenController extends Controller
         return redirect(route('auth-request'));
     }
 
-    public function direct(Request $request)
+    public function direct(Request $request, Directs $direct)
     {
-        $clientID = $_COOKIE['client_id'];
-        $raw = $this->directRepository->getDataForPrepareTokenByClientId($clientID);
+        $raw = $this->directRepository->getDataForPrepareTokenByClientId($_COOKIE['client_id']);
+        $exitCode = $direct->generateDirectCode($request, $raw);
 
-        $clientID = $raw->client_id;
-        $clientSecret = $raw->client_secret;
-
-        $exitCode = Artisan::call('app:girect-get-auth', [
-            'code' => $request->get('code') ?? 0,
-            'client_id' => $clientID,
-            'client_secret' => $clientSecret
-        ]);
-
-        if (!$exitCode) {
-            return redirect(route('auth-list-requests'))->with('message', 'Error');
-        }
+        if (!$exitCode) return redirect(route('auth-list-requests'))->with('message', 'Error');
 
         return redirect(route('auth-list-requests'));
     }

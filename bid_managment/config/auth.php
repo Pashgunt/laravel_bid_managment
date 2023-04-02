@@ -43,10 +43,6 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'recoveryToken' => [
-            'driver' => 'session',
-            'provider' => 'recoveryTokens'
-        ]
     ],
 
     /*
@@ -70,10 +66,6 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => User::class,
-        ],
-        'recoveryTokens' => [
-            'driver' => 'token',
-            'model' => RecoveryToken::class,
         ],
     ],
 

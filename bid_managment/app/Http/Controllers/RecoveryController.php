@@ -8,6 +8,7 @@ use App\BID\Repositories\UserRepository;
 use App\Http\Requests\ValidateRecovery;
 use App\Mail\RecoveryPasswordMail;
 use App\Models\RecoveryToken;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Mail;
 
 class RecoveryController extends Controller
@@ -40,8 +41,7 @@ class RecoveryController extends Controller
         }
     }
 
-    public function checkRecoveryToken(string $recoveryToken)
+    public function checkRecoveryToken(Request $request)
     {
-        dd($recoveryToken);
     }
 }
