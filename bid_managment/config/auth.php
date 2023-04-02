@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\RecoveryToken;
+use App\Models\User;
+
 return [
 
     /*
@@ -40,6 +43,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'recoveryToken' => [
+            'driver' => 'session',
+            'provider' => 'recoveryTokens'
+        ]
     ],
 
     /*
@@ -62,13 +69,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'recoveryTokens' => [
+            'driver' => 'token',
+            'model' => RecoveryToken::class,
+        ],
     ],
 
     /*
