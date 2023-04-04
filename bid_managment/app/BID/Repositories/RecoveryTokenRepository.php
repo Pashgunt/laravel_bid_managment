@@ -13,4 +13,22 @@ class RecoveryTokenRepository
             'recovery_token' => $recoveryToken
         ]);
     }
+
+    public function getUserByRecoveryToken(string $recoveryToken)
+    {
+        return RecoveryToken::query()->where([
+            'recovery_token' => $recoveryToken,
+            'is_actual' => 0
+        ])->first();
+    }
+
+    public function updateActualStateForToken(string $recoveryToken, int $userID)
+    {
+        return RecoveryToken::query()->where([
+            'recovery_token' => $recoveryToken,
+            'user_id' => $userID
+        ])->update([
+            'is_actual' => 0
+        ]);
+    }
 }

@@ -41,7 +41,13 @@ class RecoveryController extends Controller
         }
     }
 
-    public function checkRecoveryToken(Request $request)
+    public function checkRecoveryToken($recoveryToken)
     {
+        $tokenRaw = $this->recoveryTokenRepository->getUserByRecoveryToken($recoveryToken);
+        if ($tokenRaw) {
+            $userID = $tokenRaw->id;
+            $tokenRaw = $this->recoveryTokenRepository->updateActualStateForToken($recoveryToken, $userID);
+            
+        }
     }
 }

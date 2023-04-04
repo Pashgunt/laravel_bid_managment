@@ -22,7 +22,7 @@ Route::middleware(['guest'])->group(function () {
     });
 });
 
-Route::middleware(['guest'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::prefix('/direct')->group(function () {
         Route::get("/send", [AuthTokenController::class, "index"])->name('auth-request');
         Route::post("/send", [AuthTokenController::class, "store"])->name('auth-request-send');
