@@ -6,9 +6,12 @@ use App\BID\DTO\UserDTO;
 use App\BID\Repositories\RecoveryTokenRepository;
 use App\BID\Repositories\UserRepository;
 use App\Http\Requests\ValidateRecovery;
+use App\Http\Requests\ValidateRecoveryNewPass;
+use App\Jobs\RecoveryPasswordJob;
 use App\Mail\RecoveryPasswordMail;
 use App\Models\RecoveryToken;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class RecoveryController extends Controller
@@ -37,17 +40,30 @@ class RecoveryController extends Controller
             $userDTO = new UserDTO($userRaw);
             $recoveryToken = $this->recoveryToken->generateRandomString(20);
             $this->recoveryTokenRepository->createNewRecoveryTokenForUser($userDTO->getID(), $recoveryToken);
-            Mail::to($DTO->getEmail())->send(new RecoveryPasswordMail($userDTO->getName(), $recoveryToken));
+            dispatch(new RecoveryPasswordJob($userDTO->getEmail(), $userDTO->getName(), $recoveryToken));
         }
     }
 
     public function checkRecoveryToken($recoveryToken)
     {
-        $tokenRaw = $this->recoveryTokenRepository->getUserByRecoveryToken($recoveryToken);
-        if ($tokenRaw) {
-            $userID = $tokenRaw->id;
-            $tokenRaw = $this->recoveryTokenRepository->updateActualStateForToken($recoveryToken, $userID);
-            
+        if ($this->recoveryTokenRepository->getUserByRecoveryToken($recoveryToken)) {
+            return $this->changePasswordForm($recoveryToken);
         }
+        return view('auth.login');
+    }
+
+    public function changePasswordForm(string $recoveryToken)
+    {
+        return view('auth.recoveryNewPassword', ['token' => $recoveryToken]);
+    }
+
+    public function createNewPass(ValidateRecoveryNewPass $request)
+    {
+        $validated = $request->validated();
+        $tokenRaw = $this->recoveryTokenRepository->getUserByRecoveryToken($request->query('token'));
+        $this->userRepository->updateUserPassword($tokenRaw->user_id, Hash::make($validated['password']));
+        $this->recoveryTokenRepository->updateActualStateForToken($request->query('token'), $tokenRaw->user_id);
+
+        return redirect(route('auth-page'));
     }
 }

@@ -19,6 +19,8 @@ Route::middleware(['guest'])->group(function () {
         Route::get('/', [RecoveryController::class, 'index'])->name('recovery-page');
         Route::get('/{recovery_token}', [RecoveryController::class, 'checkRecoveryToken'])->name('recovery-token');
         Route::post('/', [RecoveryController::class, 'store'])->name('recovery-send-request');
+        Route::get('/new/{token}', [RecoveryController::class, 'changePasswordForm'])->name('recovery-change');
+        Route::post('/new', [RecoveryController::class, 'createNewPass'])->name('recovery-send-change');
     });
 });
 

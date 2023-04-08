@@ -13,4 +13,9 @@ class UserRepository
             'email' => $email
         ])->first();
     }
+
+    public function updateUserPassword(int $userID, string $password)
+    {
+        return User::query()->where('id', $userID)->update(['password' => $password]);
+    }
 }
