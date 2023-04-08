@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\ValidateCodeDirect;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\ValidateCodeDirect;
 
 class ApiAuthToken extends Controller
 {

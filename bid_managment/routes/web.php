@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActiveAccountController;
 use App\Http\Controllers\AuthTokenController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginUserController;
@@ -17,19 +18,24 @@ Route::middleware(['guest'])->group(function () {
     });
     Route::prefix('/recovery')->group(function () {
         Route::get('/', [RecoveryController::class, 'index'])->name('recovery-page');
-        Route::get('/{recovery_token}', [RecoveryController::class, 'checkRecoveryToken'])->name('recovery-token');
         Route::post('/', [RecoveryController::class, 'store'])->name('recovery-send-request');
-        Route::get('/new/{token}', [RecoveryController::class, 'changePasswordForm'])->name('recovery-change');
+        Route::get('/{recovery_token}', [RecoveryController::class, 'checkRecoveryToken'])->name('recovery-token');
         Route::post('/new', [RecoveryController::class, 'createNewPass'])->name('recovery-send-change');
+        Route::get('/new/{token}', [RecoveryController::class, 'changePasswordForm'])->name('recovery-change');
     });
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('/direct')->group(function () {
+        Route::get("/", [AuthTokenController::class, "list"])->name('auth-list-requests');
+        Route::get('/new', [AuthTokenController::class, "direct"])->name("auth-direct");
         Route::get("/send", [AuthTokenController::class, "index"])->name('auth-request');
         Route::post("/send", [AuthTokenController::class, "store"])->name('auth-request-send');
-        Route::get("/list", [AuthTokenController::class, "list"])->name('auth-list-requests');
-        Route::get('/new', [AuthTokenController::class, "direct"])->name("auth-direct");
     });
+
+    Route::prefix('/active')->group(function () {
+        Route::get('/', [ActiveAccountController::class, 'index'])->name('active-account');
+    });
+
     Route::get('/logout', [LoginUserController::class, 'logout'])->name('auth-logout');
 });

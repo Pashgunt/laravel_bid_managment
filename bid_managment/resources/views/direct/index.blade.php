@@ -2,6 +2,8 @@
 
 @section('title', 'main')
 
+@include('components.menu')
+
 @section('content')
     <form action="{{ route('auth-request-send') }}" method="post">
         @csrf

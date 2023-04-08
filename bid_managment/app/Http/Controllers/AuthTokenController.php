@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\BID\Contracts\ActiveAccount;
 use App\BID\Contracts\Directs;
+use App\BID\Repositories\ActiveRepository;
 use App\BID\Repositories\DirectRepository;
 use App\Http\Requests\ValidateCodeDirect;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 
 class AuthTokenController extends Controller
 {
 
     private DirectRepository $directRepository;
+    protected ActiveRepository $activeRepository;
 
     public function __construct()
     {
         $this->directRepository = new DirectRepository();
+        $this->activeRepository = new ActiveRepository();
     }
 
     public function index()
@@ -25,9 +27,13 @@ class AuthTokenController extends Controller
         return view('direct.index');
     }
 
-    public function list()
+    public function list(ActiveAccount $activeAccount)
     {
-        return view('direct.list', ['requests' => $this->directRepository->getAlRequests()]);
+        $prepareAccountsData = $activeAccount->prepareSelectedActiveAccount(
+            $this->directRepository->getAlRequests(),
+            $this->activeRepository->getActiveAccountFroUser(Auth::user()->id)
+        );
+        return view('direct.list', ['accounts' => $prepareAccountsData]);
     }
 
     public function store(ValidateCodeDirect $validate)

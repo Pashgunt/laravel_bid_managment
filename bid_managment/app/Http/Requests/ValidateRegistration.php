@@ -31,7 +31,7 @@ class ValidateRegistration extends FormRequest
     public function makeDTO(): RegisterDTO
     {
         $validated = $this->validated();
-
+        
         return new RegisterDTO($validated['email'], $validated['name'], $validated['password']);
     }
 }

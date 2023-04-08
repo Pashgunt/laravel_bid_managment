@@ -1,10 +1,96 @@
 window.addEventListener("DOMContentLoaded", () => {
-    document.querySelector('.link').addEventListener('click', async (e) => {
-        const clientID = document.querySelector('.link').getAttribute('client_id')
-        const clientSecret = document.querySelector('.link').getAttribute('client_secret')
-        const response = await fetch(`/api/setCookies?client_id=${clientID}&client_secret=${clientSecret}`);
+
+    const buttonForInnactiveAccount = document.querySelectorAll('.make_account_innactive');
+    const buttonForActiveAccount = document.querySelectorAll('.make_account_active');
+    const buttonForGetAccessToken = document.querySelectorAll('.get_access_token');
+
+    const makeAccountInnactive = async (elem) => {
+        const accountID = elem.getAttribute('account_id');
+        const userID = elem.getAttribute('user_id');
+        const response = await fetch(`/api/makeInnactiveAccount`, {
+            method: 'POST',
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify({
+                'account_id': accountID,
+                'user_id': userID
+            })
+        })
         if (!response.ok) {
             alert("Error");
         }
+    }
+
+    const makeAccountActive = async (elem) => {
+        const accountID = elem.getAttribute('account_id');
+        const userID = elem.getAttribute('user_id');
+        const response = await fetch(`/api/makeActiveAccount`, {
+            method: 'POST',
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify({
+                'account_id': accountID,
+                'user_id': userID
+            })
+        })
+        if (!response.ok) {
+            alert("Error");
+        }
+    }
+
+    const saveCookiesForGetAccessToken = async (elem) => {
+        const clientID = elem.getAttribute('client_id')
+        const clientSecret = elem.getAttribute('client_secret')
+        const response = await fetch(`/api/setCookies`, {
+            method: 'POST',
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify({
+                'client_id': clientID,
+                'client_secret': clientSecret
+            })
+        });
+        if (!response.ok) {
+            alert("Error");
+        }
+    }
+
+    buttonForGetAccessToken?.forEach(item => {
+        item.addEventListener('click', async function (e) {
+            e.preventDefault();
+            await saveCookiesForGetAccessToken(item);
+        })
+    })
+
+    buttonForInnactiveAccount?.forEach(item => {
+        item.addEventListener('click', async function (e) {
+            e.preventDefault();
+            await makeAccountInnactive(item)
+        })
+    })
+
+    buttonForActiveAccount?.forEach(item => {
+        item.addEventListener('click', async function (e) {
+            e.preventDefault();
+            await makeAccountActive(item)
+        })
     })
 })
