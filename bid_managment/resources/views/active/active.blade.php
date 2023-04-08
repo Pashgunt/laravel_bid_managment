@@ -9,8 +9,8 @@
     <select name="direct_account" id="direct_account">
         <option value="">Выберите аккаунт</option>
         @foreach ($accounts as $account)
-            <option {{$account['selected']}} value="{{$account['id']}}">{{$account['access_token']}}</option>
+            <option {{$account['selected']}} account_id="{{$account['id']}}" value="{{$account['id']}}" user_id="{{ Illuminate\Support\Facades\Auth::user()->id }}">{{$account['access_token']}}</option>
         @endforeach
     </select>
-    <a href="">Сохранить</a>
+    <a href="" class="save_active_account">Сохранить</a>
 @endsection

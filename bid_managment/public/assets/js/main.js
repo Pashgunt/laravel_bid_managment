@@ -3,6 +3,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const buttonForInnactiveAccount = document.querySelectorAll('.make_account_innactive');
     const buttonForActiveAccount = document.querySelectorAll('.make_account_active');
     const buttonForGetAccessToken = document.querySelectorAll('.get_access_token');
+    const buttonForSaveActiveAccount = document.querySelector('.save_active_account');
 
     const makeAccountInnactive = async (elem) => {
         const accountID = elem.getAttribute('account_id');
@@ -92,5 +93,12 @@ window.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             await makeAccountActive(item)
         })
+    })
+
+    buttonForSaveActiveAccount.addEventListener('click', async function (e) {
+        e.preventDefault();
+        const select = document.querySelector("#direct_account");
+        const option = select.querySelector(`option[value="${select.value}"]`)
+        await makeAccountActive(option);
     })
 })
