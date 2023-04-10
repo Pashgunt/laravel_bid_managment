@@ -6,7 +6,7 @@ use App\BID\Contracts\ActiveAccount;
 use App\BID\Contracts\Directs;
 use App\BID\Repositories\ActiveRepository;
 use App\BID\Repositories\DirectRepository;
-use App\Http\Requests\ValidateCodeDirect;
+use App\Http\Requests\Api\ValidateCodeDirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

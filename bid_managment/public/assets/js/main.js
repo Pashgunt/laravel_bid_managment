@@ -75,8 +75,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     buttonForGetAccessToken?.forEach(item => {
-        item.addEventListener('click', async function (e) {
-            e.preventDefault();
+        item.addEventListener('click', async function () {
             await saveCookiesForGetAccessToken(item);
         })
     })
@@ -95,7 +94,7 @@ window.addEventListener("DOMContentLoaded", () => {
         })
     })
 
-    buttonForSaveActiveAccount.addEventListener('click', async function (e) {
+    buttonForSaveActiveAccount?.addEventListener('click', async function (e) {
         e.preventDefault();
         const select = document.querySelector("#direct_account");
         const option = select.querySelector(`option[value="${select.value}"]`)

@@ -9,8 +9,8 @@ class AccountsDTO
     private int $id;
     private string $clientID;
     private string $clientSecret;
-    private string $acessToken;
-    private string $code;
+    private ?string $acessToken;
+    private ?string $code;
 
     public function __construct(DirectToken $direct)
     {
@@ -31,12 +31,12 @@ class AccountsDTO
         return $this->clientSecret;
     }
 
-    public function getAccessToken(): string
+    public function getAccessToken(): ?string
     {
         return $this->acessToken;
     }
 
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
