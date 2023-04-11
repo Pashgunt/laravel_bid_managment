@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\BID\Contracts\ActiveAccount;
+use App\BID\Contracts\Compaign;
 use App\BID\Contracts\Directs;
-use App\BID\Services\ActiveAccount as ServiceActiveAccount; 
+use App\BID\Services\ActiveAccount as ServiceActiveAccount;
+use App\BID\Services\YandexCompaign;
 use App\BID\Services\YandexDirect;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(ActiveAccount::class, function () {
             return new ServiceActiveAccount();
+        });
+        $this->app->bind(Compaign::class, function(){
+            return new YandexCompaign();
         });
     }
 
