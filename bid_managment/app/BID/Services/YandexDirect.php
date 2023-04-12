@@ -4,13 +4,15 @@ namespace App\BID\Services;
 
 use App\BID\Contracts\Directs;
 use App\Models\DirectToken;
-use Illuminate\Database\Eloquent\Collection;
+use App\BID\Enums\FileldNamesYandexDirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 
 class YandexDirect implements Directs
 {
+    // TODO create parent class generate for all Services
+    // TODO make prepapre HTTP request in parent class 
     public function generateDirectCode(Request $request, DirectToken $raw): int
     {
         $clientID = $raw->client_id;
@@ -25,7 +27,7 @@ class YandexDirect implements Directs
         return $exitCode;
     }
 
-    public function getCompaigns(string $accessToken, array $selectionCriteria = [], array $fieldNames = ['Id', 'Name']): array
+    public function getCompaigns(string $accessToken, array $selectionCriteria = [], array $fieldNames = FileldNamesYandexDirect::COMPAIGN_FIELD_NAMES): array
     {
         $response = Http::withHeaders([
             'Client-Login' => '',
@@ -46,7 +48,8 @@ class YandexDirect implements Directs
         return [];
     }
 
-    public function getAdGroups(string $accessToken, array $selectionCriteria = [], array $fieldNames = ["CampaignId", "Id", "Name"]){
+    public function getAdGroups(string $accessToken, array $selectionCriteria = [], array $fieldNames = FileldNamesYandexDirect::AD_GROUP_FIELD_NAMES)
+    {
         $response = Http::withHeaders([
             'Client-Login' => '',
             'Accept-Language' => 'ru',
@@ -64,5 +67,53 @@ class YandexDirect implements Directs
             return $response->json();
         }
         return [];
+    }
+
+    public function getKeywords(string $accessToken, array $selectionCriteria = [], array $fieldNames = FileldNamesYandexDirect::KEYWORD_FIELD_NAMES)
+    {
+        $response = Http::withHeaders([
+            'Client-Login' => '',
+            'Accept-Language' => 'ru',
+            'Content-Type' => 'application/json; charset=utf-8'
+        ])->withToken($accessToken)
+            ->post('https://api-sandbox.direct.yandex.com/json/v5/keywords', [
+                'method' => 'get',
+                'params' => [
+                    'SelectionCriteria' => (object) $selectionCriteria,
+                    'FieldNames' => $fieldNames
+                ]
+            ]);
+
+        if ($response->ok()) {
+            return $response->json();
+        }
+        return [];
+    }
+
+    public function getKeywordBids(string $accessToken, array $selectionCriteria = [], array $fieldNames = FileldNamesYandexDirect::KEYWORD_BID_FIELD_NAMES)
+    {
+        $response = Http::withHeaders([
+            'Client-Login' => '',
+            'Accept-Language' => 'ru',
+            'Content-Type' => 'application/json; charset=utf-8'
+        ])->withToken($accessToken)
+            ->post('https://api-sandbox.direct.yandex.com/json/v5/keywordbids', [
+                'method' => 'get',
+                'params' => [
+                    'SelectionCriteria' => (object) $selectionCriteria,
+                    'FieldNames' => $fieldNames,
+                    'SearchFieldNames' => ['AuctionBids', 'Bid'],
+                    "NetworkFieldNames" => ["Bid", "Coverage"],
+                ]
+            ]);
+
+        if ($response->ok()) {
+            return $response->json();
+        }
+        return [];
+    }
+
+    public function getBids(string $accessToken, array $selectionCriteria = [], array $fieldNames = FileldNamesYandexDirect::BID_FIELD_NAMES)
+    {
     }
 }
