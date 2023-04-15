@@ -9,6 +9,12 @@ use App\BID\Contracts\Directs;
 use App\BID\Contracts\Keyword;
 use App\BID\Repositories\ActiveRepository;
 use App\BID\Repositories\DirectRepository;
+use App\BID\Services\YandexAdGroup;
+use App\BID\Services\YandexCompaign;
+use App\BID\Services\YandexKeyword;
+use App\BID\Services\YandexKeywordBid;
+use Closure;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
 
 class ActiveAccountController extends Controller
@@ -26,58 +32,59 @@ class ActiveAccountController extends Controller
 
     public function index(
         ActiveAccount $activeAccount,
-        Directs $direct,
-        Compaign $compaign,
-        AdGroup $adGroup,
-        Keyword $keyword
+        Directs $direct
     ) {
 
-        $prepareAccountsData = $activeAccount->prepareSelectedActiveAccount(
+        $accounts = $activeAccount->prepareSelectedActiveAccount(
             $this->directRepository->getAlRequests(),
             $this->activeRepository->getActiveAccountFroUser(Auth::user()->id)
         );
 
-        foreach ($prepareAccountsData as $accountData) {
+        foreach ($accounts as $accountData) {
             if ($accountData['selected']) {
                 $this->activeAccount = $accountData;
             }
         }
 
-        // TODO make Pipline for prepare info about data
+        // TODO make this in Bus
+        $compaigns = app(Pipeline::class)
+            ->send([])
+            ->through([
+                new YandexCompaign($direct->getCompaigns($this->activeAccount['access_token'])),
+                function ($request, Closure $next) use ($direct) {
+                    return $next((new YandexAdGroup($direct->getAdGroups(
+                            $this->activeAccount['access_token'],
+                            [
+                                "CampaignIds" => array_keys($request),
+                            ]
+                        )))->piplineHandler($request, $next)
+                    );
+                },
+                function ($request, Closure $next) use ($direct) {
+                    return $next((new YandexKeyword($direct->getKeywords(
+                        $this->activeAccount['access_token'],
+                        [
+                            'AdGroupIds' => $request['adGroupIDs'],
+                            'CampaignIds' => $request['campaignIDs'],
+                        ]
+                    )))->piplineHandler($request, $next));
+                },
+                function ($request, Closure $next) use ($direct) {
+                    return $next((new YandexKeywordBid($direct->getKeywordBids(
+                        $this->activeAccount['access_token'],
+                        [
+                            'AdGroupIds' => $request['adGroupIDs'],
+                            'CampaignIds' => $request['campaignIDs'],
+                            "KeywordIds" => $request['keywordIDs'],
+                            "ServingStatuses" => ["ELIGIBLE", "RARELY_SERVED"],
+                        ]
+                    )))->piplineHandler($request, $next));
+                },
+            ])
+            ->via('piplineHandler')
+            ->thenReturn();
 
-        $compaigns = $direct->getCompaigns($this->activeAccount['access_token']);
 
-        if ($compaigns) $compaigns = $compaigns['result'];
-
-        $compainIDs = $compaign->prepareCompaignIDs($compaigns);
-
-        $adGroups = $direct->getAdGroups($this->activeAccount['access_token'], [
-            "CampaignIds" => $compainIDs
-        ]);
-
-        if ($adGroups) $adGroups = $adGroups['result'];
-
-        $adGroupIDs = $adGroup->prepareAdGroupIDs($adGroups);
-
-        $keywords = $direct->getKeywords($this->activeAccount['access_token'], [
-            'AdGroupIds' => $adGroupIDs,
-            'CampaignIds' => $compainIDs,
-        ]);
-
-        if ($keywords) $keywords = $keywords['result'];
-
-        $keywordIDs = $keyword->prepareKeywordIDs($keywords);
-
-        dd($direct->getKeywordBids($this->activeAccount['access_token'], [
-            "CampaignIds" => $compainIDs,
-            "AdGroupIds" => $adGroupIDs,
-            "KeywordIds" => $keywordIDs,
-            "ServingStatuses" => ["ELIGIBLE", "RARELY_SERVED"]
-        ]));
-
-        return view('active.active', [
-            'accounts' => $prepareAccountsData,
-            'compaigns' => $compaigns
-        ]);
+        return view('active.active', compact('accounts', 'compaigns'));
     }
 }

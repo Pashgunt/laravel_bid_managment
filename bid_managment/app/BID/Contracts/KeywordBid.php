@@ -4,7 +4,7 @@ namespace App\BID\Contracts;
 
 use Closure;
 
-interface Keyword
+interface KeywordBid
 {
     public function piplineHandler($request, Closure $next);
 }

@@ -2,7 +2,9 @@
 
 namespace App\BID\Contracts;
 
+use Closure;
+
 interface Compaign
 {
-    public function prepareCompaignIDs(array $compaigns = []);
+    public function piplineHandler($request, Closure $next);
 }

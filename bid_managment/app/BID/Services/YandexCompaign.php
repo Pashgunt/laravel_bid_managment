@@ -3,14 +3,21 @@
 namespace App\BID\Services;
 
 use App\BID\Contracts\Compaign;
+use Closure;
 
-class YandexCompaign implements Compaign
+class YandexCompaign extends Service implements Compaign
 {
-    public function prepareCompaignIDs(array $compaigns = [])
+
+    private array $compaigns;
+
+    public function __construct(array $compaigns)
     {
-        if ($compaigns) {
-            return array_column(current($compaigns), 'Id');
-        }
-        return [];
+        $this->compaigns = $compaigns;
+    }
+
+    public function piplineHandler($request, Closure $next)
+    {
+        $request = $this->makeColumnByIndex($this->compaigns, 'Campaigns', 'Id');
+        return $next($request);
     }
 }

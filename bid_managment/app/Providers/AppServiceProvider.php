@@ -25,15 +25,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ActiveAccount::class, function () {
             return new ServiceActiveAccount();
         });
-        $this->app->bind(Compaign::class, function () {
-            return new YandexCompaign();
-        });
-        $this->app->bind(AdGroup::class, function () {
-            return new YandexAdGroup();
-        });
-        $this->app->bind(Keyword::class, function () {
-            return new YandexKeyword();
-        });
     }
 
     public function boot(): void

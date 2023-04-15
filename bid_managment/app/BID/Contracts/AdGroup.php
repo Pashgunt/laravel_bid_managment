@@ -2,7 +2,9 @@
 
 namespace App\BID\Contracts;
 
+use Closure;
+
 interface AdGroup
 {
-    public function prepareAdGroupIDs(array $adGroups = []);
+    public function piplineHandler($request, Closure $next);
 }
