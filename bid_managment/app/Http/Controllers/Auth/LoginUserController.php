@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\ValidateLogin;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class LoginUserController
@@ -15,12 +16,13 @@ class LoginUserController
     public function store(ValidateLogin $validate)
     {
         $DTO = $validate->makeDTO();
-
         if (Auth::attempt([
             'email' => $DTO->getEmail(),
             'password' => $DTO->getPassword()
         ])) {
-            return redirect(route('auth-list-requests'));
+            $user = Auth::user();
+            $token = $user->createToken('main')->plainTextToken;
+            return response(compact('user','token'));
         }
     }
 
