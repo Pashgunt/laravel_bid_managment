@@ -18,7 +18,9 @@ class YandexKeyword extends Service implements Keyword
     {
         $prepareKeywords = $this->makeGroupDataByColumn($this->keywords, 'Keywords', 'AdGroupId');
         foreach ($prepareKeywords as $adGropID => $keywords) {
-            $request['result'][current($keywords)['CampaignId']]['adGroups'][$adGropID]['keywords'] = array_combine(array_column($keywords, 'Id'), $keywords);
+            $compaignID = current($keywords)['CampaignId'];
+            $prepareKeywordData = $this->makeColumnByIndex(data: $keywords, model: '', column: 'Id');
+            $request['result'][$compaignID]['adGroups'][$adGropID]['keywords'] = $prepareKeywordData;
         }
         $request['keywordIDs'] = array_column(current($this->keywords)['Keywords'], 'Id');
         return $next($request);

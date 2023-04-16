@@ -18,7 +18,9 @@ class YandexKeywordBid extends Service implements KeywordBid
     {
         $prepareKeywordBids = $this->makeGroupDataByColumn($this->keywordBids, 'KeywordBids', 'KeywordId');
         foreach ($prepareKeywordBids as $keywordId => $keywordBids) {
-            $request['result'][current($keywordBids)['CampaignId']]['adGroups'][current($keywordBids)['AdGroupId']]['keywords'][$keywordId]['keywordBid'] = $keywordBids;
+            $compaignID = current($keywordBids)['CampaignId'];
+            $adGroupID = current($keywordBids)['AdGroupId'];
+            $request['result'][$compaignID]['adGroups'][$adGroupID]['keywords'][$keywordId]['keywordBid'] = $keywordBids;
         }
         return $next($request);
     }

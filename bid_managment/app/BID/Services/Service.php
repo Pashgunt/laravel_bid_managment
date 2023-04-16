@@ -24,10 +24,12 @@ class Service
             ]);
     }
 
-    // TODO make adapt to universal method without model
-    protected function makeColumnByIndex(array $data, string $model, string $column)
+    protected function makeColumnByIndex(array $data, ?string $model = '', string $column)
     {
-        return array_combine(array_column(current($data)[$model], $column), current($data)[$model]);
+        if ($model) {
+            return array_combine(array_column(current($data)[$model], $column), current($data)[$model]);
+        }
+        return array_combine(array_column($data, $column), $data);
     }
 
     protected function makeGroupDataByColumn(array $data, string $model, string $column)

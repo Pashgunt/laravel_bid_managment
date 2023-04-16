@@ -16,6 +16,7 @@ use App\BID\Services\YandexKeywordBid;
 use Closure;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
 
 class ActiveAccountController extends Controller
 {
@@ -46,7 +47,6 @@ class ActiveAccountController extends Controller
             }
         }
 
-        // TODO make this in Bus
         $compaigns = app(Pipeline::class)
             ->send([])
             ->through([

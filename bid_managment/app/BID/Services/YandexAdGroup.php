@@ -20,7 +20,8 @@ class YandexAdGroup extends Service implements AdGroup
         $prepareAdGroups = $this->makeGroupDataByColumn($this->adGroups, 'AdGroups', 'CampaignId');
         $data['result'] = $request;
         foreach ($prepareAdGroups as $compaignID => $groups) {
-            $data['result'][$compaignID]['adGroups'] = array_combine(array_column($groups, 'Id'), $groups);
+            $prepareAdGroupData = $this->makeColumnByIndex(data: $groups, model: '', column: 'Id');
+            $data['result'][$compaignID]['adGroups'] = $prepareAdGroupData;
         }
         $request = $data;
         $request['campaignIDs'] = array_keys($request['result']);
