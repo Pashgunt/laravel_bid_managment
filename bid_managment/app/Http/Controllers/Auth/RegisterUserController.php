@@ -24,8 +24,8 @@ class RegisterUserController
     {
         $DTO = $validate->makeDTO();
 
-        $this->registerRepository->createNewUser($DTO);
+        $user = $this->registerRepository->createNewUser($DTO);
 
-        return redirect(route('auth-page'));
+        return response(compact('user'));
     }
 }

@@ -1,17 +1,19 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import axiosClient from "../axios-client.js";
-
+import { useStateContext } from "../contexts/ContextProvider.jsx";
 export default function Login() {
     const emailRef = useRef();
     const passwordRef = useRef();
 
+    const { user } = useStateContext();
+    console.log(user);
     const onSubmit = (e) => {
         e.preventDefault();
         const payload = {
             email: emailRef.current.value,
             password: passwordRef.current.value
         }
-        axiosClient.post('/auth', payload)
+        axiosClient.post('/login', payload)
             .then(({ data }) => {
                 console.log(data);
             })
