@@ -1,9 +1,10 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
+import SideMenu from "../elements/SideMenu";
 
 export default function DefaultLayout() {
     return (<>
-        Default
+        <SideMenu />
         <Outlet />
     </>);
 }
