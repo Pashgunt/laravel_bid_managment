@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useNa } from "react";
 import axiosClient from "../axios-client.js";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
 import Button from '@mui/material/Button';
@@ -13,11 +13,24 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from "../elements/Copyright.jsx";
+import { Alert, Snackbar } from "@mui/material";
+import Errors from "../elements/Errors.jsx";
+import Spinner from "../elements/Spinner.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    const { user } = useStateContext();
+    const [showSnackbar, setShowSnackbar] = useState(false);
+    const [errors, setErrors] = useState(null);
+    const [showLoader, setShowLoader] = useState(false);
+    const { user, setUser, setToken } = useStateContext();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) setShowSnackbar(true);
+    }, []);
 
     const handleSubmit = (event) => {
+        setShowLoader(true);
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const payload = {
@@ -25,11 +38,14 @@ export default function Login() {
             password: data.get("password"),
         }
         axiosClient.post('/login', payload)
-            .then(({ data }) => {
-                console.log(data);
+            .then(async ({ data }) => {
+                setUser(data?.user);
+                setToken(data?.token);
+                setShowLoader(false)
             })
-            .catch(({ error }) => {
-                console.log(error);
+            .catch((error) => {
+                setShowLoader(false);
+                setErrors(error?.data?.errors)
             })
     }
 
@@ -38,6 +54,22 @@ export default function Login() {
     return (<>
         <ThemeProvider theme={theme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
+                <Snackbar
+                    autoHideDuration={4000}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={showSnackbar}
+                    onClose={() => setShowSnackbar(false)}
+                    key={'top' + 'right'}
+                >
+                    <Alert onClose={() => setShowSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+                        <Typography component="h1">
+                            You are success registered on our service! Please Login
+                        </Typography>
+                    </Alert>
+                </Snackbar>
                 <CssBaseline />
                 <Grid
                     item
@@ -53,7 +85,10 @@ export default function Login() {
                         backgroundPosition: 'center',
                     }}
                 />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square style={{
+                    position: "relative"
+                }}>
+                    {showLoader && <Spinner />}
                     <Box
                         sx={{
                             my: 8,
@@ -66,6 +101,7 @@ export default function Login() {
                         <Typography component="h1" variant="h5">
                             Sign in
                         </Typography>
+                        {errors && <Errors errors={errors} title="При авторизации пользователя произошла ошибка" />}
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                             <TextField
                                 margin="normal"
@@ -76,6 +112,9 @@ export default function Login() {
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
+                                defaultValue={user?.email ?? ''}
+                                error={errors && Object.keys(errors)?.includes('email')}
+                                helperText={errors && Object.keys(errors)?.includes('email') ? "Incorrect entity" : ''}
                             />
                             <TextField
                                 margin="normal"
@@ -86,6 +125,8 @@ export default function Login() {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
+                                error={errors && Object.keys(errors)?.includes('email')}
+                                helperText={errors && Object.keys(errors)?.includes('email') ? "Incorrect entity" : ''}
                             />
                             <FormControlLabel
                                 control={<Checkbox value="remember" color="primary" />}
@@ -106,7 +147,7 @@ export default function Login() {
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link href="#" variant="body2">
+                                    <Link href="/signup" variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>
                                 </Grid>

@@ -13,3 +13,7 @@ Route::post('/makeActiveAccount', [ApiAccountActive::class, 'storeActive']);
 
 Route::post('/login', [LoginUserController::class, 'store']);
 Route::post('/signup', [RegisterUserController::class, 'store']);
+
+Route::middleware('auth:api')->group(function(){
+    Route::post('/logout');
+});

@@ -10,9 +10,11 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from '@mui/icons-material/Home';
 import InputIcon from '@mui/icons-material/Input';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
+import { useNavigate } from "react-router-dom";
 
 export default function SideMenu() {
   const [open, setState] = useState(false);
+  const navigate = useNavigate();
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -60,19 +62,19 @@ export default function SideMenu() {
             <CloseIcon onClick={toggleDrawer(false)} fontSize='large' />
           </IconButton>
           <Box sx={{ mb: 2 }}>
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/')}>
               <ListItemIcon>
                 <HomeIcon sx={{ color: "primary.black" }} fontSize="large" />
               </ListItemIcon>
               <ListItemText primary="Main" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/signup')}>
               <ListItemIcon>
                 <HowToRegIcon sx={{ color: "primary.black" }} fontSize='large' />
               </ListItemIcon>
               <ListItemText primary="SignUp" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/login')}>
               <ListItemIcon>
                 <InputIcon sx={{ color: "primary.black" }} fontSize='large' />
               </ListItemIcon>
