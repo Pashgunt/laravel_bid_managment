@@ -26,16 +26,16 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::prefix('/direct')->group(function () {
-        Route::get("/", [AuthTokenController::class, "list"])->name('auth-list-requests');
-        Route::get('/new', [AuthTokenController::class, "direct"])->name("auth-direct");
-        Route::get("/send", [AuthTokenController::class, "index"])->name('auth-request');
-        Route::post("/send", [AuthTokenController::class, "store"])->name('auth-request-send');
-    });
+    // Route::prefix('/direct')->group(function () {
+    //     Route::get("/", [AuthTokenController::class, "list"])->name('auth-list-requests');
+    //     Route::get('/new', [AuthTokenController::class, "direct"])->name("auth-direct");
+    //     Route::get("/send", [AuthTokenController::class, "index"])->name('auth-request');
+    //     Route::post("/send", [AuthTokenController::class, "store"])->name('auth-request-send');
+    // });
 
     Route::prefix('/active')->group(function () {
         Route::get('/', [ActiveAccountController::class, 'index'])->name('active-account');
     });
 
-    Route::get('/logout', [LoginUserController::class, 'logout'])->name('auth-logout');
+    // Route::get('/logout', [LoginUserController::class, 'logout'])->name('auth-logout');
 });

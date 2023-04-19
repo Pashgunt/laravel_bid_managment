@@ -7,10 +7,11 @@ export default function AccountCard({ account }) {
 
     const [stepFaild, setStepFaild] = useState(null);
     const [activeStep, setActiveStep] = useState(1);
+    const [active, setActive] = useState(!!account['selected']);
 
     const hrefForGetAccessToken = `https://oauth.yandex.ru/authorize?response_type=code&client_id=${account['client_id']}`;
 
-    const { clientID, code, setClientID, setCode } = useStateContext();
+    const { clientID, code, setClientID, setCode, user } = useStateContext();
 
     const steps = ['Isset all need params', 'Params Is Correct', 'Access token has'];
 
@@ -42,9 +43,26 @@ export default function AccountCard({ account }) {
         setClientID(account['client_id']);
     }
 
+    const hadleActiveAccount = (event) => {
+        event.preventDefault();
+        const payload = {
+            'account_id': account['id'],
+            'user_id': user['id']
+        }
+        const url = active ? 'make_inactive' : 'make_active';
+
+        axiosClient.post(`/account/${url}`, payload)
+            .then(({ data }) => {
+                setActive(!active);
+            })
+            .catch((error) => {
+            })
+    }
+
     return (<Grid item>
         <Card>
-            <Box p={2}>
+            <Box p={2} position="relative">
+                {active && <Box position={"absolute"} bgcolor={'success.main'} bottom={0} left={0} height={7} width={'100%'}></Box>}
                 <Stepper activeStep={activeStep} >
                     {steps.map((label, index) => {
                         const labelProps = {};
@@ -89,10 +107,10 @@ export default function AccountCard({ account }) {
                     }}>{account['access_token'] ?? 'н/д'}</span>
                 </Typography>
                 <Box mt={2}>
-                    <Button size="small" variant="outlined" color="primary" style={{
+                    <Button size="small" variant="outlined" color="primary" onClick={hadleActiveAccount} style={{
                         marginRight: '10px'
                     }}>
-                        Active
+                        {active ? 'Inactive' : 'Active'}
                     </Button>
                     <Link underline="none" href={hrefForGetAccessToken} onClick={handlerForSetCookies}>
                         Get access token

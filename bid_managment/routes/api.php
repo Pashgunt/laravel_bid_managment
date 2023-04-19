@@ -8,9 +8,9 @@ use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\AuthTokenController;
 use App\Http\Controllers\UserController;
 
-Route::post('/setCookies', [ApiAuthToken::class, 'store'])->name('setCookiesForAccount');
-Route::post('/makeInnactiveAccount', [ApiAccountActive::class, 'storeInnactive']);
-Route::post('/makeActiveAccount', [ApiAccountActive::class, 'storeActive']);
+// Route::post('/setCookies', [ApiAuthToken::class, 'store'])->name('setCookiesForAccount');
+// Route::post('/makeInnactiveAccount', [ApiAccountActive::class, 'storeInnactive']);
+// Route::post('/makeActiveAccount', [ApiAccountActive::class, 'storeActive']);
 
 
 Route::post('/login', [LoginUserController::class, 'store']);
@@ -26,5 +26,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/list', [AuthTokenController::class, 'list'])->name('getAllAccount');
         Route::post('/new', [AuthTokenController::class, 'store'])->name('createNewAccount');
         Route::post('/get_access_token', [AuthTokenController::class, 'direct'])->name('getAccessToken');
+        Route::post('/make_inactive', [ApiAccountActive::class, 'storeInnactive'])->name('makeInnactiveAccount');
+        Route::post('/make_active', [ApiAccountActive::class, 'storeActive'])->name('makeActiveAccount');
     });
 });

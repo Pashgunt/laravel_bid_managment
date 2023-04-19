@@ -14,4 +14,6 @@ docker-compose exec app php artisan key:generate
 
 php artisan schedule:work
 
+php artisan queue:work
+
 npm create vite
