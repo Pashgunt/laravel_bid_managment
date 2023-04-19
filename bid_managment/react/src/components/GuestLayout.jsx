@@ -1,17 +1,44 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
+import SideMenu from "../elements/SideMenu.jsx";
+import axiosClient from "../axios-client.js";
+import Profile from "../elements/Profile.jsx";
+import { Box } from "@mui/system";
 
 export default function GuestLayout() {
-    const { user, token } = useStateContext()
+    const { setAccounts, setUser, token } = useStateContext()
 
     if (!token) {
         return <Navigate to={"/login"} />
     }
 
+    useEffect(() => {
+        axiosClient.get('/user/current')
+            .then(({ data }) => {
+                setUser(data?.user)
+            }).catch((error) => {
+                try {
+                    console.log(error);
+                } catch (e) { }
+            })
+
+        axiosClient.get('/account/list')
+            .then(({ data }) => {
+                setAccounts(data?.accounts)
+            }).catch((error) => {
+                try {
+                    console.log(error);
+                } catch (e) { }
+            })
+    }, []);
+
     return (<>
         <div>
-            Guest
+            <Box>
+                <SideMenu position={'relative'}/>
+                <Profile />
+            </Box>
             <Outlet />
         </div>
     </>);

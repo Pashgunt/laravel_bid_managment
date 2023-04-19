@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useNa } from "react";
+import React, { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
 import Button from '@mui/material/Button';
@@ -16,14 +16,12 @@ import Copyright from "../elements/Copyright.jsx";
 import { Alert, Snackbar } from "@mui/material";
 import Errors from "../elements/Errors.jsx";
 import Spinner from "../elements/Spinner.jsx";
-import { useNavigate } from "react-router-dom";
 
 export default function Login() {
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [errors, setErrors] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
     const { user, setUser, setToken } = useStateContext();
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (user) setShowSnackbar(true);

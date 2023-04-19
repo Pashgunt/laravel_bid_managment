@@ -29,27 +29,33 @@ class AuthTokenController extends Controller
 
     public function list(ActiveAccount $activeAccount)
     {
-        $prepareAccountsData = $activeAccount->prepareSelectedActiveAccount(
+        $accounts = $activeAccount->prepareSelectedActiveAccount(
             $this->directRepository->getAlRequests(),
             $this->activeRepository->getActiveAccountFroUser(Auth::user()->id)
         );
-        return view('direct.list', ['accounts' => $prepareAccountsData]);
+        return response(compact('accounts'));
     }
 
     public function store(ValidateCodeDirect $validate)
     {
         $DTO = $validate->makeDTO();
-        $this->directRepository->createNewDirectCodesForRequests($DTO);
-        return redirect(route('auth-request'));
+        $code = $this->directRepository->createNewDirectCodesForRequests($DTO);
+        return response(compact('code'));
     }
 
     public function direct(Request $request, Directs $direct)
     {
-        $raw = $this->directRepository->getDataForPrepareTokenByClientId($_COOKIE['client_id']);
-        $exitCode = $direct->generateDirectCode($request, $raw);
+        $raw = $this->directRepository->getDataForPrepareTokenByClientId($request->input('client_id'));
+        if ($raw) {
+            $exitCode = $direct->generateDirectCode($request, $raw);
 
-        if (!$exitCode) return redirect(route('auth-list-requests'))->with('message', 'Error');
+            if (!$exitCode) return response('ok', 200);
 
-        return redirect(route('auth-list-requests'));
+            return $this->prepareErrorResponse(['token' => ['Something going wrong']]);
+        }
+
+        return $this->prepareErrorResponse([
+            'token' => ['Something going wrong']
+        ]);
     }
 }

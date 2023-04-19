@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateLogin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LoginUserController
+class LoginUserController extends Controller
 {
     public function index()
     {
@@ -22,20 +23,19 @@ class LoginUserController
             'password' => $DTO->getPassword()
         ])) {
             $user = Auth::user();
-            $token = $user->createToken('main')->plainTextToken;
+            $token = $user->createToken('main')->accessToken;
             return response(compact('user', 'token'));
         }
-        return response(['errors' => [
+        return $this->prepareErrorResponse([
             'email' => ['Email is incorrect'],
             'password' => ['Password is incorrect']
-        ]], 422);
+        ]);
     }
 
     public function logout(Request $request)
     {
         $user  = $request->user();
-        $user->currentAccessToken()->delete();
-        Auth::logout();
-        return redirect(route('auth-page'));
+        $user->tokens()->delete();
+        return response(compact('user'));
     }
 }

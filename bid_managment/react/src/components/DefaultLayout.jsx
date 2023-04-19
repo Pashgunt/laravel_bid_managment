@@ -11,7 +11,7 @@ export default function DefaultLayout() {
     }
 
     return (<>
-        <SideMenu />
+        <SideMenu position={"absolute"}/>
         <Outlet />
     </>);
 }

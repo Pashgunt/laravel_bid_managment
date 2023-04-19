@@ -8,14 +8,14 @@ use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\RecoveryController;
 
 Route::middleware(['guest'])->group(function () {
-    Route::prefix('/register')->group(function () {
-        Route::get('/', [RegisterUserController::class, 'index'])->name('register-page');
-        Route::post('/', [RegisterUserController::class, 'store'])->name('register-new');
-    });
-    Route::prefix('/auth')->group(function () {
-        Route::get('/', [LoginUserController::class, 'index'])->name('auth-page');
-        Route::post('/', [LoginUserController::class, 'store'])->name('auth-send');
-    });
+    // Route::prefix('/register')->group(function () {
+    //     Route::get('/', [RegisterUserController::class, 'index'])->name('register-page');
+    //     Route::post('/', [RegisterUserController::class, 'store'])->name('register-new');
+    // });
+    // Route::prefix('/auth')->group(function () {
+    //     Route::get('/', [LoginUserController::class, 'index'])->name('auth-page');
+    //     Route::post('/', [LoginUserController::class, 'store'])->name('auth-send');
+    // });
     Route::prefix('/recovery')->group(function () {
         Route::get('/', [RecoveryController::class, 'index'])->name('recovery-page');
         Route::post('/', [RecoveryController::class, 'store'])->name('recovery-send-request');
