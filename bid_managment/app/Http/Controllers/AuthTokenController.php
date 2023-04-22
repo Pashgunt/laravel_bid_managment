@@ -22,11 +22,6 @@ class AuthTokenController extends Controller
         $this->activeRepository = new ActiveRepository();
     }
 
-    public function index()
-    {
-        return view('direct.index');
-    }
-
     public function list(ActiveAccount $activeAccount)
     {
         $accounts = $activeAccount->prepareSelectedActiveAccount(
@@ -46,6 +41,7 @@ class AuthTokenController extends Controller
     public function direct(Request $request, Directs $direct)
     {
         $raw = $this->directRepository->getDataForPrepareTokenByClientId($request->input('client_id'));
+
         if ($raw) {
             $exitCode = $direct->generateDirectCode($request, $raw);
 
@@ -59,13 +55,12 @@ class AuthTokenController extends Controller
         ]);
     }
 
+    //TODO merge this two methods duo different in one param
     public function delete(Request $request)
     {
         $account = $this->directRepository->updateActualStatateForAccount($request->post('account_id'), 0);
 
-        if ($account) {
-            return response('ok', 200);
-        }
+        if ($account) return response('ok', 200);
 
         return $this->prepareErrorResponse(['result' => ['Something going wrong']]);
     }
@@ -74,9 +69,7 @@ class AuthTokenController extends Controller
     {
         $account = $this->directRepository->updateActualStatateForAccount($request->post('account_id'), 1);
 
-        if ($account) {
-            return response('ok', 200);
-        }
+        if ($account) return response('ok', 200);
 
         return $this->prepareErrorResponse(['result' => ['Something going wrong']]);
     }

@@ -5,15 +5,13 @@ namespace App\Http\Controllers;
 use App\BID\DTO\UserDTO;
 use App\BID\Repositories\RecoveryTokenRepository;
 use App\BID\Repositories\UserRepository;
-use App\Http\Requests\ValidateRecovery;
-use App\Http\Requests\ValidateRecoveryNewPass;
+use App\Http\Requests\Api\ValidateRecovery;
+use App\Http\Requests\Api\ValidateRecoveryNewPass;
 use App\Jobs\RecoveryPasswordJob;
-use App\Mail\RecoveryPasswordMail;
 use App\Models\RecoveryToken;
-use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
+//TODO transmit this logic for React, cancel logic by Laravel blades
 class RecoveryController extends Controller
 {
     private UserRepository $userRepository;
@@ -27,11 +25,6 @@ class RecoveryController extends Controller
         $this->recoveryToken = new RecoveryToken();
     }
 
-    public function index()
-    {
-        return view('auth.recovery');
-    }
-
     public function store(ValidateRecovery $validate)
     {
         $DTO = $validate->makeDTO();
@@ -40,6 +33,7 @@ class RecoveryController extends Controller
             $userDTO = new UserDTO($userRaw);
             $recoveryToken = $this->recoveryToken->generateRandomString(20);
             $this->recoveryTokenRepository->createNewRecoveryTokenForUser($userDTO->getID(), $recoveryToken);
+            //TODO get result from dispath this action and send response to frontend
             dispatch(new RecoveryPasswordJob($userDTO->getEmail(), $userDTO->getName(), $recoveryToken));
         }
     }

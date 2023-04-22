@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api;
 
 use App\BID\DTO\RecoveryDTO;
 use Illuminate\Foundation\Http\FormRequest;

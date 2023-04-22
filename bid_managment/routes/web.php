@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\ActiveAccountController;
-use App\Http\Controllers\AuthTokenController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginUserController;
-use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\RecoveryController;
 
 Route::middleware(['guest'])->group(function () {

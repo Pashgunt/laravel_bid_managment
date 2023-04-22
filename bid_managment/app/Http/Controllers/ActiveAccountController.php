@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Bus;
 class ActiveAccountController extends Controller
 {
 
+    //TODO refactor logic with same repositories for providers 
     private DirectRepository $directRepository;
     private ActiveRepository $activeRepository;
     private array $activeAccount = [];
@@ -37,6 +38,8 @@ class ActiveAccountController extends Controller
         Directs $direct,
         Request $request
     ) {
+
+        //TODO transmit logic with dual logic function throw request params from post 'id'
 
         $accountID = $request->post('id');
 
@@ -54,6 +57,8 @@ class ActiveAccountController extends Controller
                 }
             }
         }
+
+        //TODO make in Service logic with pipline
 
         $compaigns = app(Pipeline::class)
             ->send([])

@@ -2,19 +2,18 @@
 
 use App\Http\Controllers\ActiveAccountController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ApiAuthToken;
 use App\Http\Controllers\Api\ApiAccountActive;
 use App\Http\Controllers\Auth\LoginUserController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\AuthTokenController;
 use App\Http\Controllers\UserController;
 
-Route::middleware('guest:api')->group(function () {
-    Route::post('/login', [LoginUserController::class, 'store']);
-    Route::post('/signup', [RegisterUserController::class, 'store']);
+Route::middleware(['guest:api'])->group(function () {
+    Route::post('/login', [LoginUserController::class, 'store'])->name('login');
+    Route::post('/signup', [RegisterUserController::class, 'store'])->name('signup');
 });
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     Route::prefix('/user')->group(function () {
         Route::get('/current', [UserController::class, 'getCurrentUser'])->name('getCurrentUser');
         Route::post('/logout', [LoginUserController::class, 'logout'])->name('logoutUser');

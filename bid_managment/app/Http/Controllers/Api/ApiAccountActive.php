@@ -32,6 +32,7 @@ class ApiAccountActive extends Controller
     {
         $vaidated = $request->validated();
 
+        // TODO get result from BUS chain and transmit in React
         Bus::chain([
             new InnactiveAllAccountJob($vaidated['user_id']),
             new ActiveAccountJob($vaidated['user_id'], $vaidated['account_id']),
