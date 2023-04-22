@@ -4,6 +4,7 @@ import Signup from "./views/Signup.jsx";
 import Main from "./views/Main.jsx";
 import DefaultLayout from "./components/DefaultLayout.jsx";
 import GuestLayout from "./components/GuestLayout.jsx";
+import AccountPage from "./views/AccountPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -27,7 +28,15 @@ const router = createBrowserRouter([
             {
                 path: '/main',
                 element: <Main />
-            }
+            },
+            {
+                path: '/account/:id',
+                element: <AccountPage />
+            },
+            {
+                path: '/accounts',
+                element: <AccountPage />
+            },
         ]
     },
 ]);

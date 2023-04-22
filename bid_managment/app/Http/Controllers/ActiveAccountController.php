@@ -14,6 +14,7 @@ use App\BID\Services\YandexCompaign;
 use App\BID\Services\YandexKeyword;
 use App\BID\Services\YandexKeywordBid;
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
@@ -33,17 +34,24 @@ class ActiveAccountController extends Controller
 
     public function index(
         ActiveAccount $activeAccount,
-        Directs $direct
+        Directs $direct,
+        Request $request
     ) {
+
+        $accountID = $request->post('id');
 
         $accounts = $activeAccount->prepareSelectedActiveAccount(
             $this->directRepository->getAlRequests(),
             $this->activeRepository->getActiveAccountFroUser(Auth::user()->id)
         );
 
-        foreach ($accounts as $accountData) {
-            if ($accountData['selected']) {
-                $this->activeAccount = $accountData;
+        if ($accountID) {
+            $this->activeAccount = $accounts[$accountID];
+        } else {
+            foreach ($accounts as $accountData) {
+                if ($accountData['selected']) {
+                    $this->activeAccount = $accountData;
+                }
             }
         }
 
@@ -84,7 +92,6 @@ class ActiveAccountController extends Controller
             ->via('piplineHandler')
             ->thenReturn();
 
-
-        return view('active.active', compact('accounts', 'compaigns'));
+        return response(compact('accounts', 'compaigns'));
     }
 }

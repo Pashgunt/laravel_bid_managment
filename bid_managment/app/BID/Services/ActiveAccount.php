@@ -15,7 +15,7 @@ class ActiveAccount implements InterfaceActiveAccount
         $result = [];
         foreach ($allAccounts as $account) {
             $accountDTO = new AccountsDTO($account);
-            $result[] = $accountDTO->prepareDataForSelect($activeAccount->direct_id ?? 0);
+            $result[$accountDTO->getID()] = $accountDTO->prepareDataForSelect($activeAccount->direct_id ?? 0);
         }
         return $result;
     }

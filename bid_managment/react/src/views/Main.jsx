@@ -15,7 +15,7 @@ export default function Main() {
     return (<>
         <NewAccountModal openModal={openModal} setOpenModal={setOpenModal} />
         <Box sx={{
-            mt: 2,
+            mt: 3,
             px: 2
         }}>
             <Grid container spacing={1} alignItems={'end'} mb={2}>
@@ -33,9 +33,9 @@ export default function Main() {
                 </Grid>
             </Grid>
             {
-                accounts ? <Grid container rowSpacing={4}>{accounts.map((account, index) => {
-                    return <Fragment key={index}><AccountCard
-                        account={account}
+                accounts ? <Grid container rowSpacing={4}>{Object.keys(accounts)?.map((accountID) => {
+                    return <Fragment key={accountID}><AccountCard
+                        account={accounts[accountID]}
                     /></Fragment>;
                 })}</Grid> : ''
             }

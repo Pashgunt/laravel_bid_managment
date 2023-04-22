@@ -4,6 +4,8 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from "react-router-dom";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+
 export default function GuestMenu() {
     const navigate = useNavigate();
 
@@ -13,6 +15,12 @@ export default function GuestMenu() {
                 <HomeIcon sx={{ color: "primary.black" }} fontSize="large" />
             </ListItemIcon>
             <ListItemText primary="Main" />
+        </ListItemButton>
+        <ListItemButton onClick={() => navigate('/accounts')}>
+            <ListItemIcon>
+                <ManageAccountsIcon sx={{ color: "primary.black" }} fontSize="large" />
+            </ListItemIcon>
+            <ListItemText primary="Accounts" />
         </ListItemButton>
     </Box>);
 }

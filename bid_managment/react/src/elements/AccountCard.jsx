@@ -7,6 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CircularProgressWithLabel from "./CircularProgressWithLabel";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountCard({ account }) {
 
@@ -17,6 +18,7 @@ export default function AccountCard({ account }) {
     const [showCancelDelete, setShowCancelDelete] = useState(false);
     const [progress, setProgress] = useState(10);
     const [intervalID, setIntervalID] = useState(null);
+    const navigate = useNavigate();
 
     const hrefForGetAccessToken = `https://oauth.yandex.ru/authorize?response_type=code&client_id=${account['client_id']}`;
 
@@ -122,7 +124,7 @@ export default function AccountCard({ account }) {
                 Отменить удаление
             </Link>
         </Box></Grid>}
-        <Grid item xs={12} display={showCancelDelete && 'none'}>
+        <Grid item xs={12} display={showCancelDelete && 'none'} onClick={() => navigate(`/account/${account['id']}`)}>
             <Card>
                 <Box p={2} position="relative">
                     {active && <Box position={"absolute"} bgcolor={active ? 'success.main' : 'secondary.light'} bottom={0} left={0} height={7} width={'100%'}></Box>}

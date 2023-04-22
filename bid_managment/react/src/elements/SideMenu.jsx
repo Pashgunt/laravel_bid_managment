@@ -24,7 +24,8 @@ export default function SideMenu({ position }) {
   return (
     <Box sx={{
       zIndex: 'modal',
-      position: position
+      position: position,
+      width:"max-content"
     }}>
       <IconButton
         edge="start"
