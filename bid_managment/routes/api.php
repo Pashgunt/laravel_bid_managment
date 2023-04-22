@@ -25,6 +25,8 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('/account')->group(function () {
         Route::get('/list', [AuthTokenController::class, 'list'])->name('getAllAccount');
         Route::post('/new', [AuthTokenController::class, 'store'])->name('createNewAccount');
+        Route::post('/delete', [AuthTokenController::class, 'delete'])->name('deleteAccount');
+        Route::post('/delete_cancel', [AuthTokenController::class, 'deleteCancel'])->name('cancelDeleteAccount');
         Route::post('/get_access_token', [AuthTokenController::class, 'direct'])->name('getAccessToken');
         Route::post('/make_inactive', [ApiAccountActive::class, 'storeInnactive'])->name('makeInnactiveAccount');
         Route::post('/make_active', [ApiAccountActive::class, 'storeActive'])->name('makeActiveAccount');

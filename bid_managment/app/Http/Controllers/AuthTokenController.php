@@ -58,4 +58,26 @@ class AuthTokenController extends Controller
             'token' => ['Something going wrong']
         ]);
     }
+
+    public function delete(Request $request)
+    {
+        $account = $this->directRepository->updateActualStatateForAccount($request->post('account_id'), 0);
+
+        if ($account) {
+            return response('ok', 200);
+        }
+
+        return $this->prepareErrorResponse(['result' => ['Something going wrong']]);
+    }
+
+    public function deleteCancel(Request $request)
+    {
+        $account = $this->directRepository->updateActualStatateForAccount($request->post('account_id'), 1);
+
+        if ($account) {
+            return response('ok', 200);
+        }
+
+        return $this->prepareErrorResponse(['result' => ['Something going wrong']]);
+    }
 }

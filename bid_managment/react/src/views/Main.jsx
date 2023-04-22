@@ -33,7 +33,7 @@ export default function Main() {
                 </Grid>
             </Grid>
             {
-                accounts ? <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>{accounts.map((account, index) => {
+                accounts ? <Grid container rowSpacing={4}>{accounts.map((account, index) => {
                     return <Fragment key={index}><AccountCard
                         account={account}
                     /></Fragment>;

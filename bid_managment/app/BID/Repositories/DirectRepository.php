@@ -31,12 +31,22 @@ class DirectRepository
     public function getDataForPrepareTokenByClientId(string $clientID)
     {
         return DirectToken::query()->where([
-            'client_id' => $clientID
+            'client_id' => $clientID,
+            'is_actual' => 1
         ])->first();
     }
 
     public function getAlRequests()
     {
-        return DirectToken::all();
+        return DirectToken::query()->where([
+            'is_actual' => 1
+        ])->get();
+    }
+
+    public function updateActualStatateForAccount(int $id, int $actual)
+    {
+        return DirectToken::query()->where(['id' => $id])->update([
+            'is_actual' => $actual
+        ]);
     }
 }
