@@ -90,7 +90,14 @@ class ActiveAccount implements InterfaceActiveAccount
     public function prepareAdGroups(Directs $direct, string $accessToken)
     {
         $compaigns = $this->prepareCampaigns($direct, $accessToken);
-        
+
         return ['result' => array_column($compaigns['result'], 'adGroups')];
+    }
+
+    public function prepareKeywords(Directs $direct, string $accessToken)
+    {
+        $adGroups = $this->prepareAdGroups($direct, $accessToken);
+
+        return ['result' => array_column(current($adGroups['result']), 'keywords')];
     }
 }

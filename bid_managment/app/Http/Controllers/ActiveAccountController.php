@@ -69,12 +69,7 @@ class ActiveAccountController extends Controller
         Request $request
     ) {
         $accounts = $this->prepareActiveAccount($request);
-        $keywords = $this->activeAccountService->prepareCampaigns(
-            $direct,
-            $this->activeAccount['access_token'],
-            includeKeywords: true,
-            includeKeywordBids: true
-        );
+        $keywords = $this->activeAccountService->prepareKeywords($direct,$this->activeAccount['access_token']);
         return response(compact('keywords'));
     }
 }

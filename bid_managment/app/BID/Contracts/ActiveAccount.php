@@ -24,4 +24,5 @@ interface ActiveAccount
         bool $includeKeywordBids = true
     );
     public function prepareAdGroups(Directs $direct, string $accessToken);
+    public function prepareKeywords(Directs $direct, string $accessToken);
 }

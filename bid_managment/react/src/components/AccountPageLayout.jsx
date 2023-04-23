@@ -17,7 +17,7 @@ export default function AccountPageLayout() {
     const { id } = useParams();
     const [accounts, setAccounts] = useState({});
     const [chooseAccount, setChooseAccount] = useState('');
-    const [categoryOfCompany, setCategoryOfCompany] = useState(`${id}`);
+    const [categoryOfCompany, setCategoryOfCompany] = useState(`${id}/${window.location.pathname.split('/').at(-1)}`);
     const navigate = useNavigate();
 
     const categories = [
@@ -71,7 +71,7 @@ export default function AccountPageLayout() {
                                         <ListItemText primary={text} />
                                     </ListItemButton>
                                 </ListItem>);
-                            })};
+                            })}
                         </List>
                     </Box>
                 </Grid>

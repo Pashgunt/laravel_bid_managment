@@ -8,6 +8,7 @@ import AccountPageLayout from "./components/AccountPageLayout.jsx";
 import AccountPage from "./views/AccountPage/AccountPage.jsx";
 import CampaignsPage from "./views/AccountPage/CampaignsPage.jsx";
 import AdGroupsPage from "./views/AccountPage/AdGroupsPage.jsx";
+import KeywordsPage from "./views/AccountPage/KeywordsPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: ':id/keywords',
-                        element: ''
+                        element: <KeywordsPage />
                     },
                 ]
             },
