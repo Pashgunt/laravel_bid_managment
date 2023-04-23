@@ -2,11 +2,12 @@
 
 namespace App\BID\Repositories;
 
+use App\BID\Abstracts\RepositoryForActiveAccount;
 use App\Models\ActiveAccount;
 
 class ActiveRepository
 {
-    public function getActiveAccountFroUser(int $userID)
+    public function getActiveAccountForUser(int $userID)
     {
         return ActiveAccount::query()->where([
             ['user_id', '=', $userID],

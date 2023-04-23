@@ -2,6 +2,7 @@
 
 namespace App\BID\Repositories;
 
+use App\BID\Abstracts\RepositoryForActiveAccount;
 use App\BID\DTO\DirectCodeDTO;
 use App\Models\DirectToken;
 use Illuminate\Support\Facades\Cookie;

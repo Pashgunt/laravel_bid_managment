@@ -8,6 +8,8 @@ use App\Http\Requests\Api\ValidateMakeInnactive;
 use App\Jobs\ActiveAccountJob;
 use App\Jobs\InnactiveAllAccountJob;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ApiAccountActive extends Controller
 {
@@ -31,13 +33,16 @@ class ApiAccountActive extends Controller
     public function storeActive(ValidateMakeInnactive $request)
     {
         $vaidated = $request->validated();
+        $hasFaild = false;
 
-        // TODO get result from BUS chain and transmit in React
         Bus::chain([
             new InnactiveAllAccountJob($vaidated['user_id']),
             new ActiveAccountJob($vaidated['user_id'], $vaidated['account_id']),
-        ])->dispatch();
+        ])->catch(function (Throwable $e) use (&$hasFaild) {
+            $hasFaild = true;
+            Log::error($e->__toString());
+        })->dispatch();
 
-        return response('ok', 200);
+        return !$hasFaild ? response('ok', 200) : $this->prepareErrorResponse(['result' => ['Something going wrong']]);
     }
 }

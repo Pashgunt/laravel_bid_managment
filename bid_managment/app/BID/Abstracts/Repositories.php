@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ADMIN\Abstracts;
+namespace App\BID\Abstracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;

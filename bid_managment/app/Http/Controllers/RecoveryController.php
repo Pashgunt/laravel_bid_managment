@@ -9,7 +9,11 @@ use App\Http\Requests\Api\ValidateRecovery;
 use App\Http\Requests\Api\ValidateRecoveryNewPass;
 use App\Jobs\RecoveryPasswordJob;
 use App\Models\RecoveryToken;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 //TODO transmit this logic for React, cancel logic by Laravel blades
 class RecoveryController extends Controller
@@ -29,13 +33,22 @@ class RecoveryController extends Controller
     {
         $DTO = $validate->makeDTO();
         $userRaw = $this->userRepository->getUserByEmail($DTO->getEmail());
+        $hasFaild = false;
         if ($userRaw) {
             $userDTO = new UserDTO($userRaw);
             $recoveryToken = $this->recoveryToken->generateRandomString(20);
             $this->recoveryTokenRepository->createNewRecoveryTokenForUser($userDTO->getID(), $recoveryToken);
-            //TODO get result from dispath this action and send response to frontend
-            dispatch(new RecoveryPasswordJob($userDTO->getEmail(), $userDTO->getName(), $recoveryToken));
+            Bus::batch([
+                new RecoveryPasswordJob($userDTO->getEmail(), $userDTO->getName(), $recoveryToken)
+            ])->catch(function (Batch $batch, Throwable $e) use (&$hasFaild) {
+                $hasFaild = true;
+                Log::error($e->__toString());
+            })->dispatch();
+
+            return !$hasFaild ? response('ok', 200) : $this->prepareErrorResponse(['result' => ['Something going wrong']]);
         }
+
+        return $this->prepareErrorResponse(['result' => ['Something going wrong']]);
     }
 
     public function checkRecoveryToken($recoveryToken)

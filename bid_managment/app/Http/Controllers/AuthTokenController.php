@@ -26,7 +26,7 @@ class AuthTokenController extends Controller
     {
         $accounts = $activeAccount->prepareSelectedActiveAccount(
             $this->directRepository->getAlRequests(),
-            $this->activeRepository->getActiveAccountFroUser(Auth::user()->id)
+            $this->activeRepository->getActiveAccountForUser(Auth::user()->id)
         );
         return response(compact('accounts'));
     }
@@ -50,12 +50,9 @@ class AuthTokenController extends Controller
             return $this->prepareErrorResponse(['token' => ['Something going wrong']]);
         }
 
-        return $this->prepareErrorResponse([
-            'token' => ['Something going wrong']
-        ]);
+        return $this->prepareErrorResponse(['token' => ['Something going wrong']]);
     }
 
-    //TODO merge this two methods duo different in one param
     public function delete(Request $request)
     {
         $account = $this->directRepository->updateActualStatateForAccount($request->post('account_id'), 0);

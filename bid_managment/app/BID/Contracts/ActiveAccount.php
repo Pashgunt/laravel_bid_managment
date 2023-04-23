@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 interface ActiveAccount
 {
     public function prepareSelectedActiveAccount(Collection $allAccounts, ?ModelsActiveAccount $activeAccount);
+    public function chooseOnceActiveAccountByRequest(array $accounts, ?int $accountID);
+    public function prepareCampaigns(Directs $direct, string $accessToken);
 }

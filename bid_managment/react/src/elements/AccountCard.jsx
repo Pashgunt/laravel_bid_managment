@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid, IconButton, Link, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, Grid, IconButton, Link, Snackbar, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useStateContext } from "../contexts/ContextProvider";
 import axiosClient from "../axios-client.js";
@@ -18,6 +18,8 @@ export default function AccountCard({ account }) {
     const [showCancelDelete, setShowCancelDelete] = useState(false);
     const [progress, setProgress] = useState(10);
     const [intervalID, setIntervalID] = useState(null);
+    const [showSnackbar, setShowSneckbar] = useState(false);
+
     const navigate = useNavigate();
 
     const hrefForGetAccessToken = `https://oauth.yandex.ru/authorize?response_type=code&client_id=${account['client_id']}`;
@@ -82,8 +84,11 @@ export default function AccountCard({ account }) {
 
         axiosClient.post(`/account/${url}`, payload)
             .then(({ data }) => {
+                setShowSneckbar(false);
                 setActive(!active);
             }).catch((error) => {
+                setActive(false);
+                setShowSneckbar(true);
             })
     }
 
@@ -118,6 +123,22 @@ export default function AccountCard({ account }) {
     }
 
     return (<>
+        <Snackbar
+            autoHideDuration={4000}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+            open={showSnackbar}
+            onClose={() => setShowSneckbar(false)}
+            key={'bottom' + 'left'}
+        >
+            <Alert severity="error" onClick={() => setShowSneckbar(false)} sx={{ width: '100%' }}>
+                <Typography component="h1">
+                    Activate account is unsuccess
+                </Typography>
+            </Alert>
+        </Snackbar>
         {showCancelDelete && <Grid item><Box mb={4} display={"flex"} alignItems={"center"} gap={2}>
             <CircularProgressWithLabel value={progress} />
             <Link underline={'none'} onClick={handlerCancelDelete}>

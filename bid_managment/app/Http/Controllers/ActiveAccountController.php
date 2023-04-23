@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BID\Contracts\ActiveAccount;
-use App\BID\Contracts\AdGroup;
-use App\BID\Contracts\Compaign;
 use App\BID\Contracts\Directs;
-use App\BID\Contracts\Keyword;
 use App\BID\Repositories\ActiveRepository;
 use App\BID\Repositories\DirectRepository;
 use App\BID\Services\YandexAdGroup;
@@ -17,12 +14,9 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Bus;
 
 class ActiveAccountController extends Controller
 {
-
-    //TODO refactor logic with same repositories for providers 
     private DirectRepository $directRepository;
     private ActiveRepository $activeRepository;
     private array $activeAccount = [];
@@ -39,63 +33,14 @@ class ActiveAccountController extends Controller
         Request $request
     ) {
 
-        //TODO transmit logic with dual logic function throw request params from post 'id'
-
-        $accountID = $request->post('id');
-
         $accounts = $activeAccount->prepareSelectedActiveAccount(
             $this->directRepository->getAlRequests(),
-            $this->activeRepository->getActiveAccountFroUser(Auth::user()->id)
+            $this->activeRepository->getActiveAccountForUser(Auth::user()->id)
         );
 
-        if ($accountID) {
-            $this->activeAccount = $accounts[$accountID];
-        } else {
-            foreach ($accounts as $accountData) {
-                if ($accountData['selected']) {
-                    $this->activeAccount = $accountData;
-                }
-            }
-        }
+        $this->activeAccount = $activeAccount->chooseOnceActiveAccountByRequest($accounts, $request->post('id'));
 
-        //TODO make in Service logic with pipline
-
-        $compaigns = app(Pipeline::class)
-            ->send([])
-            ->through([
-                new YandexCompaign($direct->getCompaigns($this->activeAccount['access_token'])),
-                function ($request, Closure $next) use ($direct) {
-                    return $next((new YandexAdGroup($direct->getAdGroups(
-                            $this->activeAccount['access_token'],
-                            [
-                                "CampaignIds" => array_keys($request),
-                            ]
-                        )))->piplineHandler($request, $next)
-                    );
-                },
-                function ($request, Closure $next) use ($direct) {
-                    return $next((new YandexKeyword($direct->getKeywords(
-                        $this->activeAccount['access_token'],
-                        [
-                            'AdGroupIds' => $request['adGroupIDs'],
-                            'CampaignIds' => $request['campaignIDs'],
-                        ]
-                    )))->piplineHandler($request, $next));
-                },
-                function ($request, Closure $next) use ($direct) {
-                    return $next((new YandexKeywordBid($direct->getKeywordBids(
-                        $this->activeAccount['access_token'],
-                        [
-                            'AdGroupIds' => $request['adGroupIDs'],
-                            'CampaignIds' => $request['campaignIDs'],
-                            "KeywordIds" => $request['keywordIDs'],
-                            "ServingStatuses" => ["ELIGIBLE", "RARELY_SERVED"],
-                        ]
-                    )))->piplineHandler($request, $next));
-                },
-            ])
-            ->via('piplineHandler')
-            ->thenReturn();
+        $compaigns = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token']);
 
         return response(compact('accounts', 'compaigns'));
     }
