@@ -44,4 +44,16 @@ class ActiveAccountController extends Controller
 
         return response(compact('accounts', 'compaigns'));
     }
+
+    public function getCampaigns(){
+
+    }
+
+    public function getAdGroups(){
+
+    }
+
+    public function getKeywords(){
+        
+    }
 }
