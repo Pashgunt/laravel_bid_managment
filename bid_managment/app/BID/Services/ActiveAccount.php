@@ -35,9 +35,9 @@ class ActiveAccount implements InterfaceActiveAccount
     public function prepareCampaigns(
         Directs $direct,
         string $accessToken = '',
-        bool $includeAdGroups = false,
-        bool $includeKeywords = false,
-        bool $includeKeywordBids = false
+        bool $includeAdGroups = true,
+        bool $includeKeywords = true,
+        bool $includeKeywordBids = true
     ) {
         return app(Pipeline::class)
             ->send([])
@@ -49,9 +49,9 @@ class ActiveAccount implements InterfaceActiveAccount
     public function prepareThroughArrayForPipline(
         Directs $direct,
         string $accessToken,
-        bool $includeAdGroups = false,
-        bool $includeKeywords = false,
-        bool $includeKeywordBids = false
+        bool $includeAdGroups = true,
+        bool $includeKeywords = true,
+        bool $includeKeywordBids = true
     ) {
         $through = [
             new YandexCompaign($direct->getCompaigns($accessToken))
@@ -85,5 +85,12 @@ class ActiveAccount implements InterfaceActiveAccount
         }
 
         return $through;
+    }
+
+    public function prepareAdGroups(Directs $direct, string $accessToken)
+    {
+        $compaigns = $this->prepareCampaigns($direct, $accessToken);
+        
+        return ['result' => array_column($compaigns['result'], 'adGroups')];
     }
 }

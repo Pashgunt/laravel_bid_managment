@@ -12,15 +12,16 @@ interface ActiveAccount
     public function prepareCampaigns(
         Directs $direct,
         string $accessToken,
-        bool $includeAdGroups = false,
-        bool $includeKeywords = false,
-        bool $includeKeywordBids = false
+        bool $includeAdGroups = true,
+        bool $includeKeywords = true,
+        bool $includeKeywordBids = true
     );
     public function prepareThroughArrayForPipline(
         Directs $direct,
         string $accessToken,
-        bool $includeAdGroups = false,
-        bool $includeKeywords = false,
-        bool $includeKeywordBids = false
+        bool $includeAdGroups = true,
+        bool $includeKeywords = true,
+        bool $includeKeywordBids = true
     );
+    public function prepareAdGroups(Directs $direct, string $accessToken);
 }

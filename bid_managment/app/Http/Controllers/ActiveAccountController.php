@@ -6,66 +6,75 @@ use App\BID\Contracts\ActiveAccount;
 use App\BID\Contracts\Directs;
 use App\BID\Repositories\ActiveRepository;
 use App\BID\Repositories\DirectRepository;
-use App\BID\Services\YandexAdGroup;
-use App\BID\Services\YandexCompaign;
-use App\BID\Services\YandexKeyword;
-use App\BID\Services\YandexKeywordBid;
-use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
 
 class ActiveAccountController extends Controller
 {
     private DirectRepository $directRepository;
     private ActiveRepository $activeRepository;
+    private ActiveAccount $activeAccountService;
     private array $activeAccount = [];
 
-    public function __construct()
-    {
+    public function __construct(
+        ActiveAccount $activeAccount
+    ) {
         $this->directRepository = new DirectRepository();
         $this->activeRepository = new ActiveRepository();
+        $this->activeAccountService = $activeAccount;
     }
 
-    public function index(
-        ActiveAccount $activeAccount,
-        Directs $direct,
-        Request $request
-    ) {
-
-        $accounts = $activeAccount->prepareSelectedActiveAccount(
+    private function prepareActiveAccount(Request $request)
+    {
+        $accounts = $this->activeAccountService->prepareSelectedActiveAccount(
             $this->directRepository->getAlRequests(),
             $this->activeRepository->getActiveAccountForUser(Auth::user()->id)
         );
 
-        $this->activeAccount = $activeAccount->chooseOnceActiveAccountByRequest($accounts, $request->post('id'));
+        $this->activeAccount = $this->activeAccountService->chooseOnceActiveAccountByRequest($accounts, $request->get('id'));
 
-        $compaigns = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token']);
+        return $accounts;
+    }
 
-        return response(compact('accounts', 'compaigns'));
+    public function index(
+        Directs $direct,
+        Request $request
+    ) {
+        $accounts = $this->prepareActiveAccount($request);
+        $compaigns = $this->activeAccountService->prepareCampaigns($direct, $this->activeAccount['access_token']);
+
+        return response(compact('compaigns'));
     }
 
     public function getCampaigns(
-        ActiveAccount $activeAccount,
-        Directs $direct
+        Directs $direct,
+        Request $request
     ) {
-        $compaigns = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token']);
-        return response(compact($compaigns));
+        $accounts = $this->prepareActiveAccount($request);
+        $compaigns = $this->activeAccountService->prepareCampaigns($direct, $this->activeAccount['access_token']);
+        return response(compact('compaigns'));
     }
 
     public function getAdGroups(
-        ActiveAccount $activeAccount,
-        Directs $direct
+        Directs $direct,
+        Request $request
     ) {
-        $adGroups = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token'], includeAdGroups: true);
+        $accounts = $this->prepareActiveAccount($request);
+        $adGroups = $this->activeAccountService->prepareAdGroups($direct, $this->activeAccount['access_token']);
         return response(compact('adGroups'));
     }
 
     public function getKeywords(
-        ActiveAccount $activeAccount,
-        Directs $direct
+        Directs $direct,
+        Request $request
     ) {
-        $keywords = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token'], includeKeywords: true, includeKeywordBids: true);
+        $accounts = $this->prepareActiveAccount($request);
+        $keywords = $this->activeAccountService->prepareCampaigns(
+            $direct,
+            $this->activeAccount['access_token'],
+            includeKeywords: true,
+            includeKeywordBids: true
+        );
         return response(compact('keywords'));
     }
 }

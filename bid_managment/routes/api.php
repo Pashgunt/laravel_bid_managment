@@ -28,6 +28,11 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/make_inactive', [ApiAccountActive::class, 'storeInnactive'])->name('makeInnactiveAccount');
         Route::post('/make_active', [ApiAccountActive::class, 'storeActive'])->name('makeActiveAccount');
 
-        Route::post('/information', [ActiveAccountController::class, 'index'])->name('accountDataInfo');
+        Route::prefix('/information/{id}')->group(function () {
+            Route::get('/', [ActiveAccountController::class, 'index'])->name('accountDataInfo');
+            Route::get('/campaigns', [ActiveAccountController::class, 'getCampaigns'])->name('accountInfoCampaign');
+            Route::get('/adgroups', [ActiveAccountController::class, 'getAdGroups'])->name('accountInfoAdGroup');
+            Route::get('/keywords', [ActiveAccountController::class, 'getKeywords'])->name('accountInfoKeyword');
+        });
     });
 });

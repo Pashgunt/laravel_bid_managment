@@ -4,7 +4,10 @@ import Signup from "./views/Signup.jsx";
 import Main from "./views/Main.jsx";
 import DefaultLayout from "./components/DefaultLayout.jsx";
 import GuestLayout from "./components/GuestLayout.jsx";
-import AccountPage from "./views/AccountPage.jsx";
+import AccountPageLayout from "./components/AccountPageLayout.jsx";
+import AccountPage from "./views/AccountPage/AccountPage.jsx";
+import CampaignsPage from "./views/AccountPage/CampaignsPage.jsx";
+import AdGroupsPage from "./views/AccountPage/AdGroupsPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -30,12 +33,26 @@ const router = createBrowserRouter([
                 element: <Main />
             },
             {
-                path: '/account/:id',
-                element: <AccountPage />
-            },
-            {
-                path: '/accounts',
-                element: <AccountPage />
+                path: '/account',
+                element: <AccountPageLayout />,
+                children: [
+                    {
+                        path: ':id',
+                        element: <AccountPage />
+                    },
+                    {
+                        path: ':id/campaigns',
+                        element: <CampaignsPage />
+                    },
+                    {
+                        path: ':id/adgroups',
+                        element: <AdGroupsPage />
+                    },
+                    {
+                        path: ':id/keywords',
+                        element: ''
+                    },
+                ]
             },
         ]
     },
