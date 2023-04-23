@@ -45,15 +45,27 @@ class ActiveAccountController extends Controller
         return response(compact('accounts', 'compaigns'));
     }
 
-    public function getCampaigns(){
-
+    public function getCampaigns(
+        ActiveAccount $activeAccount,
+        Directs $direct
+    ) {
+        $compaigns = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token']);
+        return response(compact($compaigns));
     }
 
-    public function getAdGroups(){
-
+    public function getAdGroups(
+        ActiveAccount $activeAccount,
+        Directs $direct
+    ) {
+        $adGroups = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token'], includeAdGroups: true);
+        return response(compact('adGroups'));
     }
 
-    public function getKeywords(){
-        
+    public function getKeywords(
+        ActiveAccount $activeAccount,
+        Directs $direct
+    ) {
+        $keywords = $activeAccount->prepareCampaigns($direct, $this->activeAccount['access_token'], includeKeywords: true, includeKeywordBids: true);
+        return response(compact('keywords'));
     }
 }

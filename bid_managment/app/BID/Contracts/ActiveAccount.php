@@ -9,5 +9,18 @@ interface ActiveAccount
 {
     public function prepareSelectedActiveAccount(Collection $allAccounts, ?ModelsActiveAccount $activeAccount);
     public function chooseOnceActiveAccountByRequest(array $accounts, ?int $accountID);
-    public function prepareCampaigns(Directs $direct, string $accessToken);
+    public function prepareCampaigns(
+        Directs $direct,
+        string $accessToken,
+        bool $includeAdGroups = false,
+        bool $includeKeywords = false,
+        bool $includeKeywordBids = false
+    );
+    public function prepareThroughArrayForPipline(
+        Directs $direct,
+        string $accessToken,
+        bool $includeAdGroups = false,
+        bool $includeKeywords = false,
+        bool $includeKeywordBids = false
+    );
 }
