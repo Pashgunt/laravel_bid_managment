@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosClient from "../../axios-client";
 import Box from '@mui/material/Box';
-import { ListSubheader } from "@mui/material";
+import { ListSubheader, Skeleton } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -32,12 +32,12 @@ export default function AccountPage() {
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={
-                <ListSubheader component="div" id="nested-list-subheader">
+                compaigns ? <ListSubheader component="div" id="nested-list-subheader">
                     Древовидная структура всех показателей кампании
-                </ListSubheader>
+                </ListSubheader> : <Skeleton variant="text" sx={{ fontSize: '1rem' }} width={300} />
             }
         >
-            {compaigns && Object.values(compaigns.result)?.map(campaign => {
+            {compaigns ? Object.values(compaigns.result)?.map(campaign => {
                 return (<>
                     <ListItem button onClick={() => (openCampaign && openCampaign === campaign.Id) ? setOpenCampaign(null) : setOpenCampaign(campaign.Id)}>
                         <ListItemText primary={campaign.Name} />
@@ -67,7 +67,16 @@ export default function AccountPage() {
                         })}
                     </List>
                 </>);
-            })}
+            }) : <>
+                <Skeleton variant="rounded" width={"100%"} height={50} animation="wave" sx={{
+                    mt: 3,
+                    mb: 1
+                }} />
+                <Skeleton variant="rounded" width={"100%"} height={50} animation="wave" sx={{
+                    mb: 1
+                }} />
+                <Skeleton variant="rounded" width={"100%"} height={50} animation="wave" />
+            </>}
         </List>
     </Box>);
 }

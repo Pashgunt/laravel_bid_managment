@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
-import { Button, FormHelperText, Grid } from "@mui/material";
+import { Button, FormHelperText, Grid, Skeleton } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -15,7 +15,7 @@ import ListItemText from "@mui/material/ListItemText";
 
 export default function AccountPageLayout() {
     const { id } = useParams();
-    const [accounts, setAccounts] = useState({});
+    const [accounts, setAccounts] = useState(null);
     const [chooseAccount, setChooseAccount] = useState('');
     const [categoryOfCompany, setCategoryOfCompany] = useState(`${id}/${window.location.pathname.split('/').at(-1)}`);
     const navigate = useNavigate();
@@ -78,27 +78,37 @@ export default function AccountPageLayout() {
                 <Divider orientation="vertical" flexItem />
                 <Grid item xs={9}>
                     <Box alignItems={'start'} display={'flex'} gap={2}>
-                        <FormControl sx={{ minWidth: 200 }} size={"small"}>
-                            <InputLabel id="demo-simple-select-autowidth-label">Accounts</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-autowidth-label"
-                                id="demo-simple-select-autowidth"
-                                autoWidth
-                                value={chooseAccount}
-                                label="Accounts"
-                            >
-                                <MenuItem value={""}>Choose a account</MenuItem>
-                                {accounts && Object.keys(accounts)?.map(accountID => {
-                                    return (
-                                        <MenuItem value={accounts[accountID]['id']}>
-                                            {accounts[accountID]['code']}
-                                        </MenuItem>
-                                    );
-                                })}
-                            </Select>
-                            <FormHelperText>Choose another account</FormHelperText>
-                        </FormControl>
-                        <Button variant="contained" size="small">Обновить</Button>
+                        {accounts ? <>
+                            <FormControl sx={{ minWidth: 200 }} size={"small"}>
+                                <InputLabel id="demo-simple-select-autowidth-label">Accounts</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-autowidth-label"
+                                    id="demo-simple-select-autowidth"
+                                    autoWidth
+                                    value={chooseAccount}
+                                    label="Accounts"
+                                >
+                                    <MenuItem value={""}>Choose a account</MenuItem>
+                                    {accounts && Object.keys(accounts)?.map(accountID => {
+                                        return (
+                                            <MenuItem value={accounts[accountID]['id']}>
+                                                {accounts[accountID]['code']}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </Select>
+                                <FormHelperText>Choose another account</FormHelperText>
+                            </FormControl>
+                            <Button variant="contained" size="small">Обновить</Button>
+                        </> : <Grid container>
+                            <Grid item xs={12} gap={2} display={"flex"} flexDirection={"row"}>
+                                <Skeleton variant="rounded" width={200} height={40} />
+                                <Skeleton variant="rounded" width={80} height={30} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Skeleton variant="text" sx={{ fontSize: '0.75rem' }} width={75} />
+                            </Grid>
+                        </Grid>}
                     </Box>
                     <Outlet />
                 </Grid>

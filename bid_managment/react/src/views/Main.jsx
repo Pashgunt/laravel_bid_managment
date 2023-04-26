@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
 import Typography from '@mui/material/Typography';
 import { Box } from "@mui/system";
-import { Button, Grid, IconButton, Modal, TextField } from "@mui/material";
+import { Button, Grid, IconButton, Modal, Skeleton, TextField } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import NewAccountModal from "../elements/modals/NewAccountModal.jsx";
 import AccountCard from "../elements/AccountCard.jsx";
@@ -11,7 +11,7 @@ export default function Main() {
     const [openModal, setOpenModal] = useState(false)
 
     const { accounts } = useStateContext();
-
+    
     return (<>
         <NewAccountModal openModal={openModal} setOpenModal={setOpenModal} />
         <Box sx={{
@@ -37,7 +37,15 @@ export default function Main() {
                     return <Fragment key={accountID}><AccountCard
                         account={accounts[accountID]}
                     /></Fragment>;
-                })}</Grid> : ''
+                })}</Grid> : <>
+                    <Skeleton variant="rounded" width={"100%"} height={200} animation="wave" sx={{
+                        mb: 3
+                    }} />
+                    <Skeleton variant="rounded" width={"100%"} height={200} animation="wave" sx={{
+                        mb: 3
+                    }} />
+                    <Skeleton variant="rounded" width={"100%"} height={200} animation="wave" />
+                </>
             }
         </Box>
     </>);
