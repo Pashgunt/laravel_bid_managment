@@ -7,6 +7,12 @@ use App\Http\Controllers\Auth\LoginUserController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\AuthTokenController;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+
+Route::fallback(function () {
+    return response('NOT FOUND', 404);
+});
 
 Route::middleware(['guest:api'])->group(function () {
     Route::post('/login', [LoginUserController::class, 'store'])->name('login');
@@ -14,15 +20,21 @@ Route::middleware(['guest:api'])->group(function () {
 });
 
 Route::middleware(['auth:api'])->group(function () {
-    Route::prefix('/user')->group(function () {
-        Route::get('/current', [UserController::class, 'getCurrentUser'])->name('getCurrentUser');
-        Route::post('/logout', [LoginUserController::class, 'logout'])->name('logoutUser');
-    });
+    Route::post('/logout', [LoginUserController::class, 'logout'])->name('logout');
+
+    Route::resource('user', UserController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->missing(function (Request $request) {
+            return Redirect::route('getAllAccount');
+        });
+
+    Route::resource('account', AuthTokenController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->missing(function (Request $request) {
+            return Redirect::route('getAllAccount');
+        });
 
     Route::prefix('/account')->group(function () {
-        Route::get('/list', [AuthTokenController::class, 'list'])->name('getAllAccount');
-        Route::post('/new', [AuthTokenController::class, 'store'])->name('createNewAccount');
-        Route::post('/delete', [AuthTokenController::class, 'delete'])->name('deleteAccount');
         Route::post('/delete_cancel', [AuthTokenController::class, 'deleteCancel'])->name('cancelDeleteAccount');
         Route::post('/get_access_token', [AuthTokenController::class, 'direct'])->name('getAccessToken');
         Route::post('/make_inactive', [ApiAccountActive::class, 'storeInnactive'])->name('makeInnactiveAccount');

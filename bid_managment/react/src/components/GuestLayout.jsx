@@ -14,7 +14,7 @@ export default function GuestLayout() {
     }
 
     useEffect(() => {
-        axiosClient.get('/user/current')
+        axiosClient.get('/user')
             .then(({ data }) => {
                 setUser(data?.user)
             }).catch((error) => {
@@ -23,7 +23,7 @@ export default function GuestLayout() {
                 } catch (e) { }
             })
 
-        axiosClient.get('/account/list')
+        axiosClient.get('/account')
             .then(({ data }) => {
                 setAccounts(data?.accounts)
             }).catch((error) => {
@@ -36,7 +36,7 @@ export default function GuestLayout() {
     return (<>
         <div>
             <Box>
-                <SideMenu position={'relative'}/>
+                <SideMenu position={'relative'} />
                 <Profile />
             </Box>
             <Outlet />

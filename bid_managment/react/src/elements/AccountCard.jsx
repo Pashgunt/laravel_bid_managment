@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CircularProgressWithLabel from "./CircularProgressWithLabel";
 import { useNavigate } from "react-router-dom";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 export default function AccountCard({ account }) {
 
@@ -67,7 +68,7 @@ export default function AccountCard({ account }) {
             .then(({ data }) => {
                 setShowCancelDelete(false);
                 clearInterval(intervalID);
-                axiosClient.get('/account/list')
+                axiosClient.get('/account')
                     .then(({ data }) => {
                         setAccounts(data?.accounts)
                     })
@@ -93,10 +94,7 @@ export default function AccountCard({ account }) {
     }
 
     const accessSoftDeleteAccount = () => {
-        const payload = {
-            'account_id': account['id']
-        }
-        axiosClient.post(`/account/delete`, payload)
+        axiosClient.delete(`/account/${account['id']}`)
             .then(({ data }) => {
                 setShowModalForDelete(false);
                 setShowCancelDelete(true);
@@ -145,7 +143,7 @@ export default function AccountCard({ account }) {
                 Отменить удаление
             </Link>
         </Box></Grid>}
-        <Grid item xs={12} display={showCancelDelete && 'none'} onClick={() => navigate(`/account/${account['id']}`)}>
+        <Grid item xs={12} display={showCancelDelete && 'none'}>
             <Card>
                 <Box p={2} position="relative">
                     {active && <Box position={"absolute"} bgcolor={active ? 'success.main' : 'secondary.light'} bottom={0} left={0} height={7} width={'100%'}></Box>}
@@ -176,6 +174,7 @@ export default function AccountCard({ account }) {
                         <Link underline="none" onClick={handleSoftDeleteAccount} color={'initial'}>
                             <DeleteOutlineIcon fontSize="medium" />
                         </Link>
+                        <ArrowForwardIcon onClick={() => navigate(`/account/${account['id']}`)} />
                     </Box>
                     <Stepper activeStep={activeStep} >
                         {steps.map((label, index) => {

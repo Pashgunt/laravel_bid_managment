@@ -30,7 +30,7 @@ export default function NewAccountModal({
             client_id: data.get("client_id"),
             client_secret: data.get("client_secret"),
         }
-        axiosClient.post('/account/new', payload)
+        axiosClient.post('/account', payload)
             .then(async ({ data }) => {
                 console.log(data);
             })

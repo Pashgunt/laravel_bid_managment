@@ -34,6 +34,10 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
+
+        Route::pattern('id', '[0-9]+');
+        Route::pattern('token', '[a-z0-9-]+');
+        Route::pattern('recovery_token', '[a-z0-9-]+');
     }
 
     /**
@@ -42,7 +46,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function configureRateLimiting(): void
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            return Limit::perMinute(100)->by($request->user()?->id ?: $request->ip());
         });
     }
 }

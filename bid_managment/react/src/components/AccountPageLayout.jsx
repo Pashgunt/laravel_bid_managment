@@ -44,7 +44,7 @@ export default function AccountPageLayout() {
     ]
 
     useEffect(() => {
-        axiosClient.get('/account/list').then(({ data }) => {
+        axiosClient.get('/account').then(({ data }) => {
             const { accounts } = data;
             setAccounts(accounts);
             setChooseAccount(id);

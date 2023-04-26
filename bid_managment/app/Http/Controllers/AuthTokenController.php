@@ -22,7 +22,7 @@ class AuthTokenController extends Controller
         $this->activeRepository = new ActiveRepository();
     }
 
-    public function list(ActiveAccount $activeAccount)
+    public function index(ActiveAccount $activeAccount)
     {
         $accounts = $activeAccount->prepareSelectedActiveAccount(
             $this->directRepository->getAlRequests(),
@@ -53,9 +53,9 @@ class AuthTokenController extends Controller
         return $this->prepareErrorResponse(['token' => ['Something going wrong']]);
     }
 
-    public function delete(Request $request)
+    public function destroy($account)
     {
-        $account = $this->directRepository->updateActualStatateForAccount($request->post('account_id'), 0);
+        $account = $this->directRepository->updateActualStatateForAccount($account, 0);
 
         if ($account) return response('ok', 200);
 

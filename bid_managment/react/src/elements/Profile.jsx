@@ -8,7 +8,7 @@ export default function Profile() {
     const { user, setUser, setToken } = useStateContext()
 
     const handleLogout = () => {
-        axiosClient.post('/user/logout')
+        axiosClient.post('/logout')
             .then(({ data }) => {
                 setUser(null)
                 setToken(null)

@@ -6,7 +6,12 @@ class FileldNamesYandexDirect
 {
     public const COMPAIGN_FIELD_NAMES = [
         'Id',
-        'Name'
+        'Name',
+        'StartDate',
+        'Type',
+        'Status',
+        'State',
+        'StatusPayment'
     ];
     public const AD_GROUP_FIELD_NAMES = [
         "CampaignId",
