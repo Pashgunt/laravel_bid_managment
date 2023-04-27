@@ -20,6 +20,17 @@ services:
       - ./bid_managment:/var/www/html
     networks:
       - bid_managment
+  redis:
+    image: redis
+    build: 
+      context: ./docker/redis
+      dockerfile: dockerfile
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - bid_managment
   mysql:
     image: mysql:8.0
     container_name: db
@@ -44,16 +55,16 @@ services:
       - './docker/nginx/conf.d:/etc/nginx/conf.d'
     networks:
       - bid_managment
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin:latest
-  #   container_name: phpmyadmin
-  #   ports:
-  #     - 1500:80
-  #   environment:
-  #     - VIRTUAL_HOST=phpmyadmin.local
-  #     - PMA_HOST=mysql
-  #   networks:
-  #     - bid_managment
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - 1500:80
+    environment:
+      - VIRTUAL_HOST=phpmyadmin.local
+      - PMA_HOST=mysql
+    networks:
+      - bid_managment
 volumes:
   dbdata:
     driver: local

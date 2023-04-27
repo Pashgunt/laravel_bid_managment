@@ -19,6 +19,7 @@ export default function AccountPage() {
         axiosClient.get(`/account/information/${id}`)
             .then(({ data }) => {
                 const { compaigns } = data;
+                console.log(compaigns);
                 setCompaigns(compaigns);
             }).catch((error) => {
             })
@@ -38,7 +39,12 @@ export default function AccountPage() {
             {compaigns ? Object.values(compaigns.result)?.map(campaign => {
                 return (<>
                     <ListItem button onClick={() => (openCampaign && openCampaign === campaign.Id) ? setOpenCampaign(null) : setOpenCampaign(campaign.Id)}>
-                        <ListItemText primary={campaign.Name} />
+                        <Box width={"100%"}>
+                            <div>№{campaign.Id} от {campaign.StartDate}</div>
+                            <Box>
+                                <div>{campaign.Name}</div>
+                            </Box>
+                        </Box>
                         {openCampaign === campaign.Id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                     </ListItem>
                     <List style={{
@@ -67,7 +73,7 @@ export default function AccountPage() {
                 </>);
             }) : <>
                 <Skeleton variant="rounded" width={"100%"} height={50} animation="wave" sx={{
-                    mt:3,
+                    mt: 3,
                     mb: 1
                 }} />
                 <Skeleton variant="rounded" width={"100%"} height={50} animation="wave" sx={{

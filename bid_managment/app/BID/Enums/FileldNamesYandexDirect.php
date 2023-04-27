@@ -11,7 +11,9 @@ class FileldNamesYandexDirect
         'Type',
         'Status',
         'State',
-        'StatusPayment'
+        'StatusPayment',
+        'Statistics',
+        'Funds'
     ];
     public const AD_GROUP_FIELD_NAMES = [
         "CampaignId",

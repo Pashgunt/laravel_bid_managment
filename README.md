@@ -17,3 +17,5 @@ php artisan schedule:work
 php artisan queue:work
 
 npm create vite
+
+redis-cli

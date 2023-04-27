@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RecoveryController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
+
+Route::get('/', function (Request $request) {
+    Redis::set('name', 'user');
+});
 
 Route::middleware(['guest'])->group(function () {
 
