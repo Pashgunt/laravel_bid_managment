@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ApiAccountActive;
 use App\Http\Controllers\Auth\LoginUserController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\AuthTokenController;
+use App\Http\Controllers\RecoveryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -17,6 +18,12 @@ Route::fallback(function () {
 Route::middleware(['guest:api'])->group(function () {
     Route::post('/login', [LoginUserController::class, 'store'])->name('login');
     Route::post('/signup', [RegisterUserController::class, 'store'])->name('signup');
+    Route::prefix('/recovery')->group(function () {
+        Route::get('/{token}', [RecoveryController::class, 'checkRecoveryToken'])->name('recovery-token');
+        Route::patch('/{token}', [RecoveryController::class , 'makeInnactive'])->name('make-inactive-token');
+        Route::post('/new/{token}', [RecoveryController::class, 'createNewPass'])->name('recovery-send-change');
+        Route::post('/', [RecoveryController::class, 'store'])->name('recovery-send-request');
+    });
 });
 
 Route::middleware(['auth:api'])->group(function () {

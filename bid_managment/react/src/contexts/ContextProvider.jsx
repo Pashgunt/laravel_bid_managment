@@ -6,11 +6,13 @@ const StateContext = createContext({
     accounts: null,
     clientID: null,
     code: null,
+    recoveryToken: null,
     setUser: () => { },
     setToken: () => { },
     setAccounts: () => { },
     setCode: () => { },
-    setClientID: () => { }
+    setClientID: () => { },
+    setRecoveryToken: () => { }
 });
 
 window.getCookie = function (name) {
@@ -24,6 +26,16 @@ export const ContextProvider = ({ children }) => {
     const [accounts, setAccounts] = useState(null);
     const [clientID, _setClientID] = useState(getCookie('client_id'));
     const [code, _setCode] = useState(getCookie('code'));
+    const [recoveryToken, _setRecoveryToken] = useState(localStorage.getItem('RECOVERY_TOKEN'));
+
+    const setRecoveryToken = (token) => {
+        _setRecoveryToken(token);
+        if (token) {
+            localStorage.setItem('RECOVERY_TOKEN', token);
+            return;
+        }
+        localStorage.removeItem('RECOVERY_TOKEN');
+    }
 
     const setClientID = (clientID, expireTime = 600) => {
         _setClientID(clientID);
@@ -46,7 +58,7 @@ export const ContextProvider = ({ children }) => {
 
     return (
         <StateContext.Provider value={{
-            user, token, accounts, clientID, code, setUser, setToken, setAccounts, setCode, setClientID
+            user, token, accounts, clientID, code, recoveryToken, setUser, setToken, setAccounts, setCode, setClientID, setRecoveryToken
         }}>
             {children}
         </StateContext.Provider>

@@ -9,6 +9,8 @@ import AccountPage from "./views/AccountPage/AccountPage.jsx";
 import CampaignsPage from "./views/AccountPage/CampaignsPage.jsx";
 import AdGroupsPage from "./views/AccountPage/AdGroupsPage.jsx";
 import KeywordsPage from "./views/AccountPage/KeywordsPage.jsx";
+import ForgotPassword from "./views/ForgotPassword.jsx";
+import NewPasword from "./views/NewPassword.jsx";
 
 const router = createBrowserRouter([
     {
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
                 path: '/signup',
                 element: <Signup />
             },
+            {
+                path: '/forgot',
+                element: <ForgotPassword />
+            },
+            {
+                path: '/recovery/:token',
+                element: <NewPasword />
+            }
         ]
     },
     {

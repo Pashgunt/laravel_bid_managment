@@ -26,7 +26,7 @@ class RecoveryPasswordJob implements ShouldQueue
         $this->token = $token;
     }
 
-    public function handle(): void
+    public function handle()
     {
         if ($this->batch()->cancelled()) return;
         Mail::to($this->email)->send(new RecoveryPasswordMail($this->name, $this->token));

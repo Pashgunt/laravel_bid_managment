@@ -32,10 +32,9 @@ class RecoveryTokenRepository
         ]);
     }
 
-    public function checkVaidTokenByDate(string $date){
-        return RecoveryToken::query()->where([
-            'created_at', '<=', $date
-        ])->update([
+    public function checkVaidTokenByDate(string $date)
+    {
+        return RecoveryToken::query()->where('created_at', '<=', $date)->update([
             'is_actual' => 0
         ]);
     }

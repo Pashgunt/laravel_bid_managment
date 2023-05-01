@@ -3,8 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,6 +31,7 @@ class MiddlewareTerminate
      */
     public function terminate(Request $request, HttpResponse $response)
     {
-        // Redis::
+        Redis::set('request', $request);
+        Redis::set('response', $response);
     }
 }

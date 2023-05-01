@@ -36,8 +36,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         Route::pattern('id', '[0-9]+');
-        Route::pattern('token', '[a-z0-9-]+');
-        Route::pattern('recovery_token', '[a-z0-9-]+');
+        Route::pattern('token', '[a-zA-Z0-9-]+');
     }
 
     /**

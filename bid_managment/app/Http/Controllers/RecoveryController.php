@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-//TODO transmit this logic for React, cancel logic by Laravel blades
 class RecoveryController extends Controller
 {
     private UserRepository $userRepository;
@@ -45,7 +44,7 @@ class RecoveryController extends Controller
                 Log::error($e->__toString());
             })->dispatch();
 
-            return !$hasFaild ? response('ok', 200) : $this->prepareErrorResponse(['result' => ['Something going wrong']]);
+            return !$hasFaild ? response(compact('recoveryToken')) : $this->prepareErrorResponse(['result' => ['Something going wrong']]);
         }
 
         return $this->prepareErrorResponse(['result' => ['Something going wrong']]);
@@ -53,24 +52,28 @@ class RecoveryController extends Controller
 
     public function checkRecoveryToken($recoveryToken)
     {
-        if ($this->recoveryTokenRepository->getUserByRecoveryToken($recoveryToken)) {
-            return $this->changePasswordForm($recoveryToken);
+        $token = $this->recoveryTokenRepository->getUserByRecoveryToken($recoveryToken);
+        if ($token) {
+            return response(compact('token'));
         }
-        return view('auth.login');
+        return $this->prepareErrorResponse(['result' => ['Something going wrong']]);
     }
 
-    public function changePasswordForm(string $recoveryToken)
-    {
-        return view('auth.recoveryNewPassword', ['token' => $recoveryToken]);
-    }
-
-    public function createNewPass(ValidateRecoveryNewPass $request)
+    public function createNewPass(ValidateRecoveryNewPass $request, string $tokenParam)
     {
         $validated = $request->validated();
-        $tokenRaw = $this->recoveryTokenRepository->getUserByRecoveryToken($request->query('token'));
-        $this->userRepository->updateUserPassword($tokenRaw->user_id, Hash::make($validated['password']));
-        $this->recoveryTokenRepository->updateActualStateForToken($request->query('token'), $tokenRaw->user_id);
+        $token = $this->recoveryTokenRepository->getUserByRecoveryToken($tokenParam);
+        $this->userRepository->updateUserPassword($token->user_id, Hash::make($validated['password']));
+        $this->recoveryTokenRepository->updateActualStateForToken($tokenParam, $token->user_id);
 
-        return redirect(route('auth-page'));
+        return response(compact('token'));
+    }
+
+    public function makeInnactive(string $tokenParam)
+    {
+        $token = $this->recoveryTokenRepository->getUserByRecoveryToken($tokenParam);
+        $this->recoveryTokenRepository->updateActualStateForToken($tokenParam, $token->user_id);
+
+        return response('ok', 200);
     }
 }
