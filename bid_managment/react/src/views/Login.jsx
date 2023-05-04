@@ -13,17 +13,27 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from "../elements/Copyright.jsx";
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, IconButton, Snackbar, Skeleton } from "@mui/material";
 import Errors from "../elements/Errors.jsx";
 import Spinner from "../elements/Spinner.jsx";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function Login() {
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [errors, setErrors] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
     const { user, setUser, setToken } = useStateContext();
+    const [captcha, setCaptcha] = useState(null);
+
+    const getCaptcha = function () {
+        axiosClient.get('/captcha')
+            .then(({ data }) => {
+                setCaptcha(data.captcha);
+            });
+    }
 
     useEffect(() => {
+        getCaptcha();
         if (user) setShowSnackbar(true);
     }, []);
 
@@ -34,6 +44,7 @@ export default function Login() {
         const payload = {
             email: data.get("email"),
             password: data.get("password"),
+            captcha: data.get("captcha"),
         }
         axiosClient.post('/login', payload)
             .then(async ({ data }) => {
@@ -126,6 +137,24 @@ export default function Login() {
                                 error={errors && Object.keys(errors)?.includes('email')}
                                 helperText={errors && Object.keys(errors)?.includes('email') ? "Incorrect entity" : ''}
                             />
+                            <Box sx={{ mt: 2 }} display={"flex"} gap={1}>
+                                {captcha ? <div dangerouslySetInnerHTML={{ __html: captcha }}></div> : <Skeleton variant="rounded" width={160} height={40} />}
+                                <IconButton onClick={getCaptcha}>
+                                    <RefreshIcon />
+                                </IconButton>
+                            </Box>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="captcha"
+                                label="Captcha"
+                                name="captcha"
+                                autoComplete="captcha"
+                                autoFocus
+                                error={errors && Object.keys(errors)?.includes('captcha')}
+                                helperText={errors && Object.keys(errors)?.includes('captcha') ? "Incorrect entity" : ''}
+                            />
                             <FormControlLabel
                                 control={<Checkbox value="remember" color="primary" />}
                                 label="Remember me"
@@ -140,7 +169,7 @@ export default function Login() {
                             </Button>
                             <Grid container>
                                 <Grid item xs>
-                                    <Link href="#" variant="body2">
+                                    <Link href="/forgot" variant="body2">
                                         Forgot password?
                                     </Link>
                                 </Grid>

@@ -13,13 +13,25 @@ import Copyright from "../elements/Copyright.jsx";
 import Errors from "../elements/Errors.jsx";
 import Spinner from "../elements/Spinner.jsx";
 import { useNavigate } from "react-router-dom";
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { IconButton, Skeleton } from "@mui/material";
 
 export default function ForgotPassword() {
     const [errors, setErrors] = useState(null);
     const { recoveryToken, setRecoveryToken } = useStateContext();
     const [showLoader, setShowLoader] = useState(false);
+    const [captcha, setCaptcha] = useState(null);
     const navigate = useNavigate();
+
+    const getCaptcha = function () {
+        axiosClient.get('/captcha')
+            .then(({ data }) => {
+                setCaptcha(data.captcha);
+            });
+    }
+
     useEffect(() => {
+        getCaptcha();
         if (recoveryToken) {
             setRecoveryToken(null);
         }
@@ -33,6 +45,7 @@ export default function ForgotPassword() {
         const data = new FormData(event.currentTarget);
         const payload = {
             email: data.get("email"),
+            captcha: data.get("captcha"),
         }
         axiosClient.post('/recovery', payload)
             .then(async ({ data }) => {
@@ -96,6 +109,24 @@ export default function ForgotPassword() {
                                 autoFocus
                                 error={errors && Object.keys(errors)?.includes('email')}
                                 helperText={errors && Object.keys(errors)?.includes('email') ? "Incorrect entity" : ''}
+                            />
+                            <Box sx={{ mt: 2 }} display={"flex"} gap={1}>
+                                {captcha ? <div dangerouslySetInnerHTML={{ __html: captcha }}></div> : <Skeleton variant="rounded" width={160} height={40} />}
+                                <IconButton onClick={getCaptcha}>
+                                    <RefreshIcon />
+                                </IconButton>
+                            </Box>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="captcha"
+                                label="Captcha"
+                                name="captcha"
+                                autoComplete="captcha"
+                                autoFocus
+                                error={errors && Object.keys(errors)?.includes('captcha')}
+                                helperText={errors && Object.keys(errors)?.includes('captcha') ? "Incorrect entity" : ''}
                             />
                             <Button
                                 type="submit"

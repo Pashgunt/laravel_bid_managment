@@ -22,7 +22,7 @@ services:
       - bid_managment
   redis:
     image: redis
-    build: 
+    build:
       context: ./docker/redis
       dockerfile: dockerfile
     container_name: redis

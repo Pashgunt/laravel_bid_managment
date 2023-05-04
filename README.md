@@ -19,3 +19,5 @@ php artisan queue:work
 npm create vite
 
 redis-cli
+
+php artisan vendor:publish

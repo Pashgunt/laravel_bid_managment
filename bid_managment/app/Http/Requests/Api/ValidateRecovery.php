@@ -16,6 +16,7 @@ class ValidateRecovery extends FormRequest
     {
         return [
             'email' => 'required|email',
+            'captcha' => 'required',
         ];
     }
 

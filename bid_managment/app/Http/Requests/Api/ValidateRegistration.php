@@ -25,6 +25,7 @@ class ValidateRegistration extends FormRequest
                 ->symbols()
                 ->uncompromised(),
             're_password' => 'required|same:password',
+            'captcha' => 'required',
         ];
     }
 

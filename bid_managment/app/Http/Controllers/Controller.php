@@ -10,6 +10,12 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
+    public function makeCaptcha(string $typeCaptcha = 'default')
+    {
+        $captcha = captcha_img($typeCaptcha);
+        return response(compact('captcha'));
+    }
+
     public function prepareErrorResponse(array $errorFields)
     {
         return response([

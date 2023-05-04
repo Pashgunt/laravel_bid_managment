@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../axios-client.js";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
 import Button from '@mui/material/Button';
@@ -13,12 +13,27 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from "../elements/Copyright.jsx";
 import Errors from "../elements/Errors.jsx";
 import Spinner from "../elements/Spinner.jsx";
+import { IconButton, Skeleton } from "@mui/material";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function Signup() {
     const [errors, setErrors] = useState(null);
     const navigate = useNavigate();
     const { setUser } = useStateContext();
     const [showLoader, setShowLoader] = useState(false);
+    const [captcha, setCaptcha] = useState(null);
+
+    const getCaptcha = function () {
+        axiosClient.get('/captcha')
+            .then(({ data }) => {
+                setCaptcha(data.captcha);
+            });
+    }
+
+    useEffect(() => {
+        getCaptcha();
+    }, [])
+
     const handleSubmit = (event) => {
         setShowLoader(true);
         event.preventDefault();
@@ -28,6 +43,7 @@ export default function Signup() {
             email: data.get("email"),
             password: data.get("password"),
             re_password: data.get("re_password"),
+            captcha: data.get("captcha"),
         }
         axiosClient.post('/signup', payload)
             .then(async ({ data }) => {
@@ -134,6 +150,24 @@ export default function Signup() {
                                     />
                                 </Grid>
                             </Grid>
+                            <Box sx={{ mt: 2 }} display={"flex"} gap={1}>
+                                {captcha ? <div dangerouslySetInnerHTML={{ __html: captcha }}></div> : <Skeleton variant="rounded" width={160} height={40} />}
+                                <IconButton onClick={getCaptcha}>
+                                    <RefreshIcon />
+                                </IconButton>
+                            </Box>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="captcha"
+                                label="Captcha"
+                                name="captcha"
+                                autoComplete="captcha"
+                                autoFocus
+                                error={errors && Object.keys(errors)?.includes('captcha')}
+                                helperText={errors && Object.keys(errors)?.includes('captcha') ? "Incorrect entity" : ''}
+                            />
                             <Button
                                 type="submit"
                                 fullWidth

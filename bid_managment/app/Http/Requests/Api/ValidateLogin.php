@@ -22,7 +22,8 @@ class ValidateLogin extends FormRequest
                 ->mixedCase()
                 ->numbers()
                 ->symbols()
-                ->uncompromised()
+                ->uncompromised(),
+            'captcha' => 'required',
         ];
     }
 
