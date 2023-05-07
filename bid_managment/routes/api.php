@@ -41,12 +41,12 @@ Route::middleware(['auth:api'])->group(function () {
         ->missing(function (Request $request) {
             return Redirect::route('login');
         });
+    Route::post('/logout', [LoginUserController::class, 'logout'])->name('logout');
 });
 
 Route::post('/qr_code', [QrCodeController::class, 'store'])->name('qrcode');
 
 Route::middleware(['auth:api', 'twofactor:api'])->group(function () {
-    Route::post('/logout', [LoginUserController::class, 'logout'])->name('logout');
     Route::resource('user', UserController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->missing(function (Request $request) {
