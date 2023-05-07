@@ -37,4 +37,13 @@ class TwoFactorController extends Controller
 
         return response('ok', 200);
     }
+
+    public function check()
+    {
+        $user = auth('api')->user();
+        if ($user && $user->two_factor_code) {
+            return response('ok', 422);
+        }
+        return response('ok', 200);
+    }
 }

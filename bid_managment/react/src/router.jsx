@@ -12,6 +12,8 @@ import KeywordsPage from "./views/AccountPage/KeywordsPage.jsx";
 import ForgotPassword from "./views/ForgotPassword.jsx";
 import NewPasword from "./views/NewPassword.jsx";
 import Verify from "./views/Verify.jsx";
+import AdditionaLayout from "./components/AdditionalLayout.jsx";
+import QrCodeLogin from "./elements/QrCodeLogin.jsx";
 
 const router = createBrowserRouter([
     {
@@ -37,8 +39,18 @@ const router = createBrowserRouter([
         ]
     },
     {
-        path: '/verify',
-        element: <Verify />
+        path: '/',
+        element: <AdditionaLayout />,
+        children: [
+            {
+                path: '/verify',
+                element: <Verify />
+            },
+            {
+                path: '/qrcode/:id',
+                element: <QrCodeLogin />
+            }
+        ]
     },
     {
         path: '/',

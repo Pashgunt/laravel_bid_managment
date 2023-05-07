@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginUserController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\AuthTokenController;
 use App\Http\Controllers\CaptchaController;
+use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\RecoveryController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserController;
@@ -31,7 +32,10 @@ Route::middleware(['guest:api'])->group(function () {
 });
 
 Route::middleware(['auth:api'])->group(function () {
-    Route::get('verify/resend', [TwoFactorController::class, 'resend'])->name('verify.resend');
+    Route::prefix('/verify')->group(function () {
+        Route::get('/resend', [TwoFactorController::class, 'resend'])->name('verify.resend');
+        Route::get('/check', [TwoFactorController::class, 'check'])->name('verify.check');
+    });
     Route::resource('verify', TwoFactorController::class)
         ->only(['index', 'store'])
         ->missing(function (Request $request) {
@@ -39,9 +43,10 @@ Route::middleware(['auth:api'])->group(function () {
         });
 });
 
+Route::post('/qr_code', [QrCodeController::class, 'store'])->name('qrcode');
+
 Route::middleware(['auth:api', 'twofactor:api'])->group(function () {
     Route::post('/logout', [LoginUserController::class, 'logout'])->name('logout');
-
     Route::resource('user', UserController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->missing(function (Request $request) {
