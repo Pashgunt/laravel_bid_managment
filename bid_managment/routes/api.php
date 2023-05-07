@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\AuthTokenController;
 use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\RecoveryController;
+use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -30,6 +31,15 @@ Route::middleware(['guest:api'])->group(function () {
 });
 
 Route::middleware(['auth:api'])->group(function () {
+    Route::get('verify/resend', [TwoFactorController::class, 'resend'])->name('verify.resend');
+    Route::resource('verify', TwoFactorController::class)
+        ->only(['index', 'store'])
+        ->missing(function (Request $request) {
+            return Redirect::route('login');
+        });
+});
+
+Route::middleware(['auth:api', 'twofactor:api'])->group(function () {
     Route::post('/logout', [LoginUserController::class, 'logout'])->name('logout');
 
     Route::resource('user', UserController::class)

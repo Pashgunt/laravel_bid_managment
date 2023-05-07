@@ -11,6 +11,7 @@ import AdGroupsPage from "./views/AccountPage/AdGroupsPage.jsx";
 import KeywordsPage from "./views/AccountPage/KeywordsPage.jsx";
 import ForgotPassword from "./views/ForgotPassword.jsx";
 import NewPasword from "./views/NewPassword.jsx";
+import Verify from "./views/Verify.jsx";
 
 const router = createBrowserRouter([
     {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
                 element: <NewPasword />
             }
         ]
+    },
+    {
+        path: '/verify',
+        element: <Verify />
     },
     {
         path: '/',
